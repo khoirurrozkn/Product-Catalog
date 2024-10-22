@@ -1,0 +1,19 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer utilities {
+    ::-webkit-scrollbar {
+        @apply w-0;
+    }
+    
+    ::-moz-scrollbar {
+        @apply w-0;
+    }
+
+    @media (min-width: 820px) {
+        *{
+            @apply text-[18px];
+        }
+    }
+}
