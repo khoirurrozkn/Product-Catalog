@@ -1,18 +1,24 @@
 package delivery
 
 import (
-	"server/config"
 	"log"
+	"server/config"
+	"server/delivery/controller"
+	"server/repository"
+	"server/usecase"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
+	productUc usecase.ProductUsecase
+
 	engine *gin.Engine
 	host string
 }
 
 func (s *Server) setupController(){
+	controller.NewProductController(s.productUc, s.engine).Route()
 
 }
 
@@ -34,11 +40,13 @@ func NewServer() *Server {
 		log.Fatal("db connection : ", err.Error())
 	}
 
-	db.Conn()
-	// Temporary before connecting on repository
+	productRepo := repository.NewProductRepository(db.Conn())
+	productUc := usecase.NewProductUsecase(productRepo)
 
 	engine := gin.Default()
 	return &Server{
+		productUc: productUc,
+
 		engine: engine,
 		host: ":8080",
 	}
