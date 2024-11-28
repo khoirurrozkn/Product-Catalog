@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"challenge_bioskop/model/dto"
+	"server/model/dto"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
