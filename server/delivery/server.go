@@ -4,6 +4,7 @@ import (
 	"log"
 	"server/config"
 	"server/delivery/controller"
+	"server/middleware"
 	"server/repository"
 	"server/usecase"
 
@@ -44,6 +45,8 @@ func NewServer() *Server {
 	productUc := usecase.NewProductUsecase(productRepo)
 
 	engine := gin.Default()
+	engine.Use(middleware.NewCorsMiddleware())
+
 	return &Server{
 		productUc: productUc,
 
