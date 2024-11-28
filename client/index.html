@@ -18,11 +18,237 @@
         <meta property="og:description" content="Creating an Product Catalog website dedicated to climbing equipment, featuring a range of essential gear including tents, shoes, jackets, tracking pole, and more.">
         <meta property="og:url" content="">
         <meta property="og:type" content="website">
-            
+
         <!-- CSS -->
         <link rel="stylesheet" href="./output.css">
 </head>
-<body>
-    
+<body class="bg-[#F4F4F4]">
+    <style>
+        @font-face {
+            font-family: 'neue-montreal';
+            src: url('./neue-montreal/NeueMontreal-Regular.otf') format('opentype');
+        }
+        @font-face {
+            font-family: 'hatton';
+            src: url('./hatton-font/PPHattonMedium500.otf') format('opentype');
+        }
+
+        .hatton {
+            font-family: "hatton", serif;
+            font-weight: 500;
+        }
+
+        * {
+            font-family: "neue-montreal", sans-serif;
+            font-weight: 400;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.2)), url("img/background-hero-landing-page2.jpg");
+            background-position: 50% 70%;
+            background-size: cover;
+        }
+        
+        .stock-ticker ul {
+            list-style: none;
+            flex-shrink: 0;
+            min-width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        
+            animation: scroll 30s linear infinite;
+        }
+
+        @keyframes scroll {
+            to {
+            transform: translateX(calc(-100%));
+            }
+        }
+
+        .bag {
+            transition: 0.05s ease transform;
+        }
+    </style>
+    <!-- <nav class="fixed z-[100] backdrop-blur top-0 left-0 w-screen h-[30px]">
+
+    </nav> -->
+
+    <div class="hero h-screen pt-[30px] relative">
+        <div class="flex justify-between items-center px-[5%] text-white">
+            <div class="w-[40px] aspect-square border border-white rounded-full">              
+            </div>
+            <div class="flex gap-[70px]">
+                <a href="" class="hatton text-[20px]">● Home</a>
+                <a href="" class="text-white text-opacity-[80%]">Product</a>
+                <a href="" class="text-white text-opacity-[80%]">Galery</a>
+                <a href="" class="text-white text-opacity-[80%]">Contact</a>
+            </div>
+        </div>
+        <h1 class="text-white text-center pt-[10vh]">
+            <span class="text-[130px] leading-[110%]">Mewing </span>
+            <span class="text-[130px] leading-[110%] hatton ms-[10px]">Gear</span>
+            <br>
+            <span class="text-[40px]">Tools for the </span>
+            <span class="text-[40px] hatton">True Sigma </span>
+            <span class="text-[40px]">Spirit.</span>
+        </h1>
+
+        <div class="absolute flex items-center gap-[30px] left-[10%] bottom-[8%]">
+            <div>
+                <p class="hatton text-[35px] text-white">
+                    25% OFF
+                </p>
+                <p class="until text-white text-[20px] mt-[20px]">
+                    UNTIL
+                </p>
+                <p id="time" class="text-white text-[35px]">
+                    <!-- FIELD AT SCRIPT -->
+                </p>
+            </div>
+            <button class="bg-[#E9E5CE] w-[150px] text-black rounded-full aspect-square hatton flex items-center justify-center">
+                See Product
+            </button>
+        </div>
+
+        <div aria-hidden="true" class="absolute text-white flex gap-[30px] bg-white bg-opacity-[13%] backdrop-blur-[2px] py-[20px] px-[30px] right-[10%] bottom-[8%]">
+            <img id="bag" class="bag bg-black bg-opacity-[50%] w-[150px] aspect-square object-cover block" src="./img/bag.png" alt="">
+            <div>
+                <p class="hatton text-[20px] pb-[8px]">
+                    ● New Product
+                </p>
+                <p class="mt-[30px] text-[20px]">
+                    ANTI JAMET BAG
+                </p>
+                <p class="mt-[10px] text-[20px] border border-[#ffffff80] text-center py-[3px] px-[10px] block">
+                    Rp. 999.999,00
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-between px-[5%] pt-[140px]">
+        <h2 class="w-[30%]">
+            <span class="text-[60px] leading-[120%] text-black text-opacity-[80%]">Unlock Your </span>
+            <span class="hatton text-[100px] leading-[120%]">Sigma</span>
+        </h2>
+        <p class="text-[30px] text-black text-opacity-[70%] w-[750px] leading-[140%] indent-[40px]">
+            We are here for you, the true Sigma elite! Mewing Gear <br> designs exclusive tools crafted to enhance your aura and charisma from level 70 to 999+, 
+            Not only do they support your activities, but they also boost your adventurous spirit and confidence to new heights.
+        </p>
+    </div>
+
+    <div class="h-[300vh] gap-[20px] relative mt-[45px]">
+        <div aria-hidden="true" class="absolute left-0 mt-[130px] w-full stock-ticker flex overflow-hidden">
+            <ul>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%]">No Skibidi</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%] mx-[140px]">!</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%]">No Skibidi</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%] mx-[140px]">!</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%]">No Skibidi</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%] mx-[140px]">!</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%]">No Skibidi</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%] mx-[140px]">!</span></li>
+            </ul>
+            <ul>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%]">No Skibidi</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%] mx-[140px]">!</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%]">No Skibidi</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%] mx-[140px]">!</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%]">No Skibidi</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%] mx-[140px]">!</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%]">No Skibidi</span></li>
+                <li><span class="hatton text-[130px] text-black text-opacity-[20%] mx-[140px]">!</span></li>
+            </ul>
+        </div>
+
+        <div aria-hidden="true" class="sticky transform top-[20%] translate-x-[-50%] left-[50%] z-[20] w-[350px] w-[/25vw] aspect-[3/3.5]">
+            <!-- <img id="bag" class="bag w-full h-full object-cover block" src="./img/bag.png" alt=""> -->
+            <div>
+                <img id="bag" class="bag absolute w-full h-full object-cover block" src="./img/bag-top.png" alt="">
+                <!-- <p class="absolute">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, laudantium.</p> -->
+            </div>
+
+            <div>
+                <img id="bag" class="bag absolute w-full h-full object-cover block" src="./img/bag-mid.png" alt="">
+                <!-- <p class="absolute">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, laudantium.</p> -->
+            </div>
+
+            <div>
+                <img id="bag" class="bag absolute w-full h-full object-cover block" src="./img/bag-left.png" alt="">
+                <!-- <p class="absolute">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, laudantium.</p> -->
+            </div>
+
+            <div>
+                <img id="bag" class="bag absolute w-full h-full object-cover block" src="./img/bag-right.png" alt="">
+                <!-- <p class="absolute">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, laudantium.</p> -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const START_TIME = 2 * 60 * 60;
+        let remainingTime = START_TIME;
+
+        const countdownElement = document.getElementById('time');
+
+        function updateCountdown() {
+          if (remainingTime <= 0) {
+            remainingTime = START_TIME;
+          }
+
+          const hours = Math.floor(remainingTime / 3600);
+          const minutes = Math.floor((remainingTime % 3600) / 60);
+          const seconds = remainingTime % 60;
+
+          const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+          countdownElement.textContent = formattedTime;
+
+          remainingTime--;
+        }
+
+        setInterval(updateCountdown, 1000);
+
+        updateCountdown();
+        
+
+        const bag = document.getElementById('bag')
+        const trigBag = document.getElementById('trig-bag')
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show')
+
+                    if (entry.target === trigBag) {
+                        // window.addEventListener('scroll', () => parallaxEffect())
+                    }
+
+                }else {
+                    entry.target.classList.remove('show')
+                }
+            })
+        }, {
+            threshold: 0.1
+        })
+
+        observer.observe(trigBag);
+
+        // function parallaxEffect() {
+        //     const scrollPosition = window.scrollY;
+        //     const imageOffset = bag.offsetTop;
+
+        //     if (scrollPosition >= imageOffset - window.innerHeight) {
+        //         const move = ((scrollPosition - imageOffset) - 500 ) * 0.4;
+        //         console.log("AWOAKW : ", (scrollPosition - imageOffset) * 0.01);
+                
+        //         bag.style.transform = `translateY(${move}px)`;
+        //     }
+        // }
+
+        
+    </script>
 </body>
 </html>
