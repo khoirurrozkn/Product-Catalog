@@ -15,11 +15,12 @@ type Server struct {
 	productUc usecase.ProductUsecase
 
 	engine *gin.Engine
+	routerGroup *gin.RouterGroup
 	host string
 }
 
 func (s *Server) setupController(){
-	controller.NewProductController(s.productUc, s.engine).Route()
+	controller.NewProductController(s.productUc, s.routerGroup).Route()
 
 }
 
@@ -45,12 +46,14 @@ func NewServer() *Server {
 	productUc := usecase.NewProductUsecase(productRepo)
 
 	engine := gin.Default()
+	routerGroup := engine.RouterGroup.Group("/api")
 	engine.Use(middleware.NewCorsMiddleware())
 
 	return &Server{
 		productUc: productUc,
 
 		engine: engine,
+		routerGroup: routerGroup,
 		host: ":8080",
 	}
 }

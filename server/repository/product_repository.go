@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"server/model"
 	"server/utils"
 
@@ -9,8 +10,10 @@ import (
 )
 
 type ProductRepository interface{
-	CreateProduct(NewCustomer model.Product) (model.Product, error)
+	CreateProduct(NewProduct model.Product) (model.Product, error)
 	GetProduct() ([]interface{}, error)
+	UpdateProductById(updatedProduct model.Product) (model.Product, error)
+	DeleteProductById(id string) error
 }
 
 type productRepository struct {
@@ -58,6 +61,25 @@ func (cr *productRepository) GetProduct() ([]interface{}, error){
 	}
 
 	return products, err
+}
+
+func (cr *productRepository) UpdateProductById(updatedProduct model.Product) (model.Product, error){
+	_, err := cr.db.Exec(utils.UPDATE_PRODUCT_BY_ID, updatedProduct.Id, updatedProduct.Price, updatedProduct.Name)
+
+	if err != nil {
+		return model.Product{}, fmt.Errorf("invalid request body")
+	}
+
+	return updatedProduct, nil
+}
+
+func (cr *productRepository) DeleteProductById(id string) error{
+	_, err := cr.db.Query(utils.DELETE_PRODUCT_BY_ID, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func NewProductRepository(db *sql.DB) ProductRepository {
