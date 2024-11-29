@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+</head>
+<body>
+
+    <style>
+        .list {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+
+    <h1 class="text-center">Halaman admin</h1>
+
+    <h2 style="margin-top: 70px;">Create New Product</h2>
+    <form id="product-form">
+        <label for="name">Product Name:</label>
+        <input type="text" id="name" name="name">
+        <br><br>
+        <label for="price">Product Price:</label>
+        <input type="number" id="price" name="price">
+        <br><br>
+        <button type="submit">Create Product</button>
+    </form>
+
+    <h2 style="margin-top: 70px;">Edit Product</h2>
+    <form id="edit-product-form">
+        <input type="hidden" id="edit-id" name="id">
+        <label for="edit-name">Product Name:</label>
+        <input type="text" id="edit-name" name="name">
+        <br><br>
+        <label for="edit-price">Product Price:</label>
+        <input type="number" id="edit-price" name="price">
+        <br><br>
+        <button type="submit">Update Product</button>
+    </form>
+
+    <h2 style="margin-top: 70px;">Delete Product</h2>
+    <form id="delete-product-form">
+        <label for="id-item">Product Id:</label>
+        <input type="text" id="id-item" name="id-item">
+        <button type="submit">Delete Product</button>
+    </form>
+
+
+    <script>
+
+        async function createProduct(event) {
+            event.preventDefault()
+
+            const name = document.getElementById('name').value
+            const price = document.getElementById('price').value
+
+            const newProduct = {
+                price: parseInt(price),
+                name: name
+            }
+
+            if ( newProduct.name > 10 || newProduct.name == '') alert('Hahhhhhh')
+            if ( newProduct.price <= 0 || newProduct.name == '' ) alert('Hahhhhhh')
+
+            try {
+                const response = await fetch('http://localhost:8080/api/product', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newProduct)
+                })
+
+                if (!response.ok) {
+                    throw new Error('Failed to create product')
+                }
+
+                alert('Berhasil')
+
+            } catch (error) {
+                alert('Error : ' + error.message)
+            }
+        }
+        document.getElementById('product-form').addEventListener('submit', createProduct)
+
+        async function updateProduct(event) {
+            event.preventDefault()
+
+            // const id = document.getElementById('edit-id').value
+            const name = document.getElementById('edit-name').value
+            const price = document.getElementById('edit-price').value
+
+            const updatedProduct = {
+                // id: id kasih manual, belom jadi,
+                // id: 'f205df95-53cf-4231-b21b-c88244461649',
+                name: name,
+                price: parseInt(price)
+            }
+
+            if ( updatedProduct.name > 10 || newProduct.name == '') alert('Hahhhhhh')
+            if ( updatedProduct.price <= 0 || newProduct.name == '') alert('Hahhhhhh')
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/product`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedProduct)
+                })
+
+                if (!response.ok) {
+                    throw new Error('Failed to update product')
+                }
+
+                const product = await response.json()
+                alert('BERHASIL')
+
+            } catch (error) {
+                alert('Error : ' + error.message)
+            }
+        }
+        document.getElementById('edit-product-form').addEventListener('submit', updateProduct)
+
+        async function deleteProduct(event) {
+            event.preventDefault()
+
+            const id = document.getElementById('id-item').value
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/product/${id}`, {
+                    method: 'DELETE'
+                })
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete product')
+                }
+
+                const product = await response.json()
+                alert('berhasil')
+
+            } catch (error) {
+                alert('Error : ' + error.message)
+            }
+        }
+        document.getElementById('delete-product-form').addEventListener('submit', deleteProduct)
+    </script>
+
+</body>
+</html>
