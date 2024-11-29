@@ -46,8 +46,8 @@ func NewServer() *Server {
 	productUc := usecase.NewProductUsecase(productRepo)
 
 	engine := gin.Default()
-	routerGroup := engine.RouterGroup.Group("/api")
 	engine.Use(middleware.NewCorsMiddleware())
+	routerGroup := engine.RouterGroup.Group("/api")
 
 	return &Server{
 		productUc: productUc,
