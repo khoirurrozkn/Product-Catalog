@@ -6,9 +6,10 @@ import (
 )
 
 type ProductUsecase interface {
-	CreateProduct(newCustomer model.Product) (model.Product, error)
+	CreateProduct(newProduct model.Product) (model.Product, error)
 	GetProduct() ([]interface{}, error)
-
+	UpdateProductById(updatedProduct model.Product) (model.Product, error)
+	DeleteProductById(id string) error
 }
 
 type productUsecase struct {
@@ -21,6 +22,14 @@ func (uc *productUsecase) CreateProduct(newProduct model.Product) (model.Product
 
 func (uc *productUsecase) GetProduct() ([]interface{}, error){
 	return uc.repo.GetProduct()
+}
+
+func (uc *productUsecase) UpdateProductById(updatedProduct model.Product) (model.Product, error){
+	return uc.repo.UpdateProductById(updatedProduct)
+}
+
+func (uc *productUsecase) DeleteProductById(id string) error{
+	return uc.repo.DeleteProductById(id)
 }
 
 func NewProductUsecase(repo repository.ProductRepository) ProductUsecase {
