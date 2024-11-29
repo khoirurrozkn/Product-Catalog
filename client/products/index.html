@@ -20,9 +20,99 @@
         <meta property="og:type" content="website">
             
         <!-- CSS -->
-        <link rel="stylesheet" href="./output.css">
+        <link rel="stylesheet" href="../output.css">
 </head>
 <body>
+    <style>
+        .list {
+            width: 24.25%;
+            height: 50vh;
+            border: solid black 1px;
+        }
+    </style>
+    <img class="w-full h-[80vh] sticky top-0 bg-gray-400" src="" alt="FOTO HOOK / DISKON">
+    <div class="relative h-[300vh] bg-white pt-[40px]">
+        <div class="flex justify-between px-[5%]">
+            <div class="flex items-center gap-[15px]">
+                <h2 class="text-[30px]">For Sigma Women</h2>
+                <svg class="w-[25px] aspect-square" fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_225_" d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"></path> </g></svg>
+            </div>
+            
+            <div class="flex gap-[30px]">
+
+                <div class="flex items-center">
+                    <button>
+                        Category :
+                    </button>  
+                    <span>
+                        Bag
+                    </span>
+                    <svg class="w-[20px] aspect-square ms-[15px]" fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_225_" d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"></path> </g></svg>
+                </div>
+
+                <div class="flex items-center">
+                    <button>
+                        Price :
+                    </button>
+                    <span>
+                        most expensive
+                    </span>
+                    <svg class="w-[20px] aspect-square ms-[15px]" fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_225_" d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"></path> </g></svg>
+                </div>
+
+                <div class="flex items-center">
+                    <button>
+                        Sort By :
+                    </button>
+                    <span>
+                        Newest
+                    </span>
+                    <svg class="w-[20px] aspect-square ms-[15px]" fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_225_" d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"></path> </g></svg>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="px-[3%] mt-[40px]">
+            <div id="product-list" class="flex flex-wrap justify-center items-start gap-[10px]">
     
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        async function getProduct() {
+            try {
+                const response = await fetch('http://localhost:8080/api/product')
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products')
+                }
+
+                const products = await response.json()
+                
+                const productList = document.getElementById('product-list')
+                productList.innerHTML = ''
+
+                if (products.data.length > 0) {
+                    products.data.forEach(product => {
+                        const productItem = document.createElement('div')
+                        productItem.classList.add('list')
+
+                        productItem.textContent = `Name: ${product.name}, Price: $${product.price}`
+                        productList.appendChild(productItem)
+                    })
+                } else {
+                    productList.textContent = 'No products available.'
+                }
+            } catch (error) {
+                alert('Error : ' + error.message)
+            }
+        }
+
+        window.onload = getProduct
+
+    </script>
 </body>
 </html>
