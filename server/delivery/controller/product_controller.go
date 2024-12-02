@@ -138,7 +138,7 @@ func (pc *ProductController) updateHandler(c *gin.Context){
 func (pc *ProductController) deleteByIdHandler(c *gin.Context){
 	idProduct := c.Param("id")
 
-	err := pc.pu.DeleteProductById(idProduct)
+	data, err := pc.pu.DeleteProductById(idProduct)
 	if err != nil {
 		response.SendSingleResponseError(
 			c, 
@@ -151,7 +151,7 @@ func (pc *ProductController) deleteByIdHandler(c *gin.Context){
 
 	response.SendSingleResponse(
 		c,
-		nil,
+		data,
 		"Success deleted Product",
 	)
 }

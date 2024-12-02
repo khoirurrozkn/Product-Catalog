@@ -12,7 +12,7 @@ type ProductUsecase interface {
 	CreateProduct(newProduct model.Product) (model.Product, error)
 	GetProduct(order string, sort string, page int, limit int) ([]any, dto.Paging, error)
 	UpdateProductById(updatedProduct model.Product) (response.UpdatedProductResponse, error)
-	DeleteProductById(id string) error
+	DeleteProductById(id string) (string, error)
 }
 
 type productUsecase struct {
@@ -50,6 +50,7 @@ func (pu *productUsecase) UpdateProductById(updatedProduct model.Product) (respo
 
 	res := response.UpdatedProductResponse {
 		Id: data.Id,
+		ImgUrl: data.ImgUrl,
 		Price: data.Price,
 		Name: data.Name,
 	}
@@ -57,7 +58,7 @@ func (pu *productUsecase) UpdateProductById(updatedProduct model.Product) (respo
 	return res, nil
 }
 
-func (pu *productUsecase) DeleteProductById(id string) error{
+func (pu *productUsecase) DeleteProductById(id string) (string, error){
 	return pu.repo.DeleteProductById(id)
 }
 
