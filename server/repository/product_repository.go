@@ -23,17 +23,18 @@ type productRepository struct {
 func (pr *productRepository) CreateProduct(NewProduct model.Product) (model.Product, error) {
 	NewProduct.Id = uuid.NewString()
 	
-	_, err := pr.db.Exec(utils.INSERT_PRODUCT,
+	data := model.Product{}
+	err := pr.db.QueryRow(utils.INSERT_PRODUCT,
 		NewProduct.Id,
 		NewProduct.Price,
 		NewProduct.Name,
-	)
+	).Scan(&data.Id, &data.Price, &data.Name, &data.CreatedAt)
 
 	if err != nil {
 		return model.Product{}, err
 	}
 
-	return NewProduct, err
+	return data, err
 }
 
 func (pr *productRepository) GetProduct(order string, sort string, limit int, offset int) ([]any, int, error){
