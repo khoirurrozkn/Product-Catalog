@@ -10,7 +10,7 @@ import (
 
 type ProductUsecase interface {
 	CreateProduct(newProduct model.Product) (model.Product, error)
-	GetProduct(order string, sort string, page int, limit int) ([]interface{}, dto.Paging, error)
+	GetProduct(order string, sort string, page int, limit int) ([]any, dto.Paging, error)
 	UpdateProductById(updatedProduct model.Product) (response.UpdatedProductResponse, error)
 	DeleteProductById(id string) error
 }
@@ -23,7 +23,7 @@ func (pu *productUsecase) CreateProduct(newProduct model.Product) (model.Product
 	return pu.repo.CreateProduct(newProduct)
 }
 
-func (pu *productUsecase) GetProduct(order string, sort string, page int, limit int) ([]interface{}, dto.Paging, error){
+func (pu *productUsecase) GetProduct(order string, sort string, page int, limit int) ([]any, dto.Paging, error){
 	offset := (page - 1) * limit
 
 	data, totalRows, err := pu.repo.GetProduct(order, sort, limit, offset)

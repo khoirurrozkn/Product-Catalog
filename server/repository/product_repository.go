@@ -11,7 +11,7 @@ import (
 
 type ProductRepository interface{
 	CreateProduct(NewProduct model.Product) (model.Product, error)
-	GetProduct(order string, sort string, limit int, offset int) ([]interface{}, int, error)
+	GetProduct(order string, sort string, limit int, offset int) ([]any, int, error)
 	UpdateProductById(updatedProduct model.Product) (model.Product, error)
 	DeleteProductById(id string) error
 }
@@ -36,7 +36,7 @@ func (pr *productRepository) CreateProduct(NewProduct model.Product) (model.Prod
 	return NewProduct, err
 }
 
-func (pr *productRepository) GetProduct(order string, sort string, limit int, offset int) ([]interface{}, int, error){
+func (pr *productRepository) GetProduct(order string, sort string, limit int, offset int) ([]any, int, error){
 
 	query := fmt.Sprintf(utils.SELECT_PRODUCT_WITH_PAGING, order, sort)
 
@@ -46,7 +46,7 @@ func (pr *productRepository) GetProduct(order string, sort string, limit int, of
 	}
 	defer rows.Close()
 
-	var products []interface{}
+	var products []any
 	for rows.Next() {
 		var product model.Product
 		err = rows.Scan(
