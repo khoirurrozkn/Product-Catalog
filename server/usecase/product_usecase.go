@@ -1,13 +1,15 @@
 package usecase
 
 import (
+	"math"
 	"server/model"
+	"server/model/dto"
 	"server/repository"
 )
 
 type ProductUsecase interface {
 	CreateProduct(newProduct model.Product) (model.Product, error)
-	GetProduct() ([]interface{}, error)
+	GetProduct(order string, sort string, page int, limit int) ([]interface{}, dto.Paging, error)
 	UpdateProductById(updatedProduct model.Product) (model.Product, error)
 	DeleteProductById(id string) error
 }
@@ -20,8 +22,22 @@ func (uc *productUsecase) CreateProduct(newProduct model.Product) (model.Product
 	return uc.repo.CreateProduct(newProduct)
 }
 
-func (uc *productUsecase) GetProduct() ([]interface{}, error){
-	return uc.repo.GetProduct()
+func (uc *productUsecase) GetProduct(order string, sort string, page int, limit int) ([]interface{}, dto.Paging, error){
+	offset := (page - 1) * limit
+
+	data, totalRows, err := uc.repo.GetProduct(order, sort, limit, offset)
+	if err != nil {
+		return nil, dto.Paging{}, err
+	}
+
+	paging := dto.Paging {
+		Page: page,
+		TotalPages: int(math.Ceil(float64(totalRows)/float64(limit))),
+		TotalRows: totalRows,
+		RowsPerPage: limit,
+	}
+
+	return data, paging, nil
 }
 
 func (uc *productUsecase) UpdateProductById(updatedProduct model.Product) (model.Product, error){
