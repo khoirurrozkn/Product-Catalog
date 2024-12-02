@@ -11,11 +11,11 @@ import (
 )
 
 type ProductController struct {
-	uc usecase.ProductUsecase
+	pu usecase.ProductUsecase
 	rg *gin.RouterGroup
 }
 
-func (cc *ProductController) CreateHandler(c *gin.Context) {
+func (pc *ProductController) CreateHandler(c *gin.Context) {
 	var newProduct model.Product
 
 	if err := c.ShouldBindJSON(&newProduct); err != nil {
@@ -28,7 +28,7 @@ func (cc *ProductController) CreateHandler(c *gin.Context) {
 		return
 	}
 
-	data, err := cc.uc.CreateProduct(newProduct)
+	data, err := pc.pu.CreateProduct(newProduct)
 	if err != nil {
 		response.SendSingleResponseError(
 			c, 
@@ -46,7 +46,7 @@ func (cc *ProductController) CreateHandler(c *gin.Context) {
 	)
 }
 
-func (cc *ProductController) getAllHandler(c *gin.Context) {
+func (pc *ProductController) getAllHandler(c *gin.Context) {
 	order := c.DefaultQuery("order", "created_at")
 	sort := c.DefaultQuery("sort", "DESC")
 	limit := 2
@@ -80,7 +80,7 @@ func (cc *ProductController) getAllHandler(c *gin.Context) {
 		sort = "DESC"
 	}
 
-	product, paging, err := cc.uc.GetProduct(
+	product, paging, err := pc.pu.GetProduct(
 		order,
 		sort,
 		page,
@@ -105,7 +105,7 @@ func (cc *ProductController) getAllHandler(c *gin.Context) {
 	)
 }
 
-func (cc *ProductController) updateHandler(c *gin.Context){
+func (pc *ProductController) updateHandler(c *gin.Context){
 	var updatedProduct model.Product
 	if err := c.ShouldBindJSON(&updatedProduct); err != nil {
 		response.SendSingleResponseError(
@@ -117,7 +117,7 @@ func (cc *ProductController) updateHandler(c *gin.Context){
         return
 	}
 
-	data, err := cc.uc.UpdateProductById(updatedProduct)
+	data, err := pc.pu.UpdateProductById(updatedProduct)
 	if err != nil {
 		response.SendSingleResponseError(
 			c, 
@@ -135,10 +135,10 @@ func (cc *ProductController) updateHandler(c *gin.Context){
 	)
 }
 
-func (cc *ProductController) deleteByIdHandler(c *gin.Context){
+func (pc *ProductController) deleteByIdHandler(c *gin.Context){
 	idProduct := c.Param("id")
 
-	err := cc.uc.DeleteProductById(idProduct)
+	err := pc.pu.DeleteProductById(idProduct)
 	if err != nil {
 		response.SendSingleResponseError(
 			c, 
@@ -156,17 +156,17 @@ func (cc *ProductController) deleteByIdHandler(c *gin.Context){
 	)
 }
 
-func (cc *ProductController) Route(){
-	router := cc.rg.Group("/product")
-	router.POST("", cc.CreateHandler)
-	router.GET("", cc.getAllHandler)
-	router.PUT("", cc.updateHandler)
-	router.DELETE("/:id", cc.deleteByIdHandler)
+func (pc *ProductController) Route(){
+	router := pc.rg.Group("/product")
+	router.POST("", pc.CreateHandler)
+	router.GET("", pc.getAllHandler)
+	router.PUT("", pc.updateHandler)
+	router.DELETE("/:id", pc.deleteByIdHandler)
 }
 
-func NewProductController(uc usecase.ProductUsecase, routerGroup *gin.RouterGroup) *ProductController {
+func NewProductController(pu usecase.ProductUsecase, routerGroup *gin.RouterGroup) *ProductController {
 	return &ProductController{
-		uc: uc,
+		pu: pu,
 		rg: routerGroup,
 	}
 }

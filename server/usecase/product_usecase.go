@@ -19,14 +19,14 @@ type productUsecase struct {
 	repo repository.ProductRepository
 }
 
-func (uc *productUsecase) CreateProduct(newProduct model.Product) (model.Product, error) {
-	return uc.repo.CreateProduct(newProduct)
+func (pu *productUsecase) CreateProduct(newProduct model.Product) (model.Product, error) {
+	return pu.repo.CreateProduct(newProduct)
 }
 
-func (uc *productUsecase) GetProduct(order string, sort string, page int, limit int) ([]interface{}, dto.Paging, error){
+func (pu *productUsecase) GetProduct(order string, sort string, page int, limit int) ([]interface{}, dto.Paging, error){
 	offset := (page - 1) * limit
 
-	data, totalRows, err := uc.repo.GetProduct(order, sort, limit, offset)
+	data, totalRows, err := pu.repo.GetProduct(order, sort, limit, offset)
 	if err != nil {
 		return nil, dto.Paging{}, err
 	}
@@ -41,8 +41,8 @@ func (uc *productUsecase) GetProduct(order string, sort string, page int, limit 
 	return data, paging, nil
 }
 
-func (uc *productUsecase) UpdateProductById(updatedProduct model.Product) (response.UpdatedProductResponse, error){
-	data, err := uc.repo.UpdateProductById(updatedProduct)
+func (pu *productUsecase) UpdateProductById(updatedProduct model.Product) (response.UpdatedProductResponse, error){
+	data, err := pu.repo.UpdateProductById(updatedProduct)
 
 	if err != nil {
 		return response.UpdatedProductResponse{}, err
@@ -57,8 +57,8 @@ func (uc *productUsecase) UpdateProductById(updatedProduct model.Product) (respo
 	return res, nil
 }
 
-func (uc *productUsecase) DeleteProductById(id string) error{
-	return uc.repo.DeleteProductById(id)
+func (pu *productUsecase) DeleteProductById(id string) error{
+	return pu.repo.DeleteProductById(id)
 }
 
 func NewProductUsecase(repo repository.ProductRepository) ProductUsecase {

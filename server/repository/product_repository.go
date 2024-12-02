@@ -20,10 +20,10 @@ type productRepository struct {
 	db *sql.DB
 }
 
-func (cr *productRepository) CreateProduct(NewProduct model.Product) (model.Product, error) {
+func (pr *productRepository) CreateProduct(NewProduct model.Product) (model.Product, error) {
 	NewProduct.Id = uuid.NewString()
 	
-	_, err := cr.db.Exec(utils.INSERT_PRODUCT,
+	_, err := pr.db.Exec(utils.INSERT_PRODUCT,
 		NewProduct.Id,
 		NewProduct.Price,
 		NewProduct.Name,
@@ -36,11 +36,11 @@ func (cr *productRepository) CreateProduct(NewProduct model.Product) (model.Prod
 	return NewProduct, err
 }
 
-func (cr *productRepository) GetProduct(order string, sort string, limit int, offset int) ([]interface{}, int, error){
+func (pr *productRepository) GetProduct(order string, sort string, limit int, offset int) ([]interface{}, int, error){
 
 	query := fmt.Sprintf(utils.SELECT_PRODUCT_WITH_PAGING, order, sort)
 
-	rows, err := cr.db.Query(query, limit, offset)
+	rows, err := pr.db.Query(query, limit, offset)
 	if err != nil {
 		return nil, -1, err
 	}
@@ -64,7 +64,7 @@ func (cr *productRepository) GetProduct(order string, sort string, limit int, of
 	}
 
 	var totalRows int
-	err = cr.db.QueryRow(utils.SELECT_COUNT_PRODUCT).Scan(&totalRows)
+	err = pr.db.QueryRow(utils.SELECT_COUNT_PRODUCT).Scan(&totalRows)
 	if err != nil {
 		return nil, -1, err
 	}
@@ -72,8 +72,8 @@ func (cr *productRepository) GetProduct(order string, sort string, limit int, of
 	return products, totalRows, nil
 }
 
-func (cr *productRepository) UpdateProductById(updatedProduct model.Product) (model.Product, error){
-	_, err := cr.db.Exec(utils.UPDATE_PRODUCT_BY_ID, updatedProduct.Id, updatedProduct.Price, updatedProduct.Name)
+func (pr *productRepository) UpdateProductById(updatedProduct model.Product) (model.Product, error){
+	_, err := pr.db.Exec(utils.UPDATE_PRODUCT_BY_ID, updatedProduct.Id, updatedProduct.Price, updatedProduct.Name)
 
 	if err != nil {
 		return model.Product{}, err
@@ -82,8 +82,8 @@ func (cr *productRepository) UpdateProductById(updatedProduct model.Product) (mo
 	return updatedProduct, nil
 }
 
-func (cr *productRepository) DeleteProductById(id string) error{
-	_, err := cr.db.Query(utils.DELETE_PRODUCT_BY_ID, id)
+func (pr *productRepository) DeleteProductById(id string) error{
+	_, err := pr.db.Query(utils.DELETE_PRODUCT_BY_ID, id)
 	if err != nil {
 		return err
 	}
