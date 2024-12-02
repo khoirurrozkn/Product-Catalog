@@ -76,7 +76,7 @@ func (cr *productRepository) UpdateProductById(updatedProduct model.Product) (mo
 	_, err := cr.db.Exec(utils.UPDATE_PRODUCT_BY_ID, updatedProduct.Id, updatedProduct.Price, updatedProduct.Name)
 
 	if err != nil {
-		return model.Product{}, fmt.Errorf("invalid request body")
+		return model.Product{}, err
 	}
 
 	return updatedProduct, nil

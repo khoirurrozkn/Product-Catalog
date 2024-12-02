@@ -22,7 +22,7 @@ func SendSingleResponseCreated(c *gin.Context, data any, descriptionMsg string) 
 func SendSingleResponse(c *gin.Context, data any, descriptionMsg string) {
 	c.JSON(http.StatusOK, &SingleResponse{
 		Status: Status{
-			Code: http.StatusCreated,
+			Code: http.StatusOK,
 			Description: descriptionMsg,
 		},
 		Data: data,
@@ -30,9 +30,9 @@ func SendSingleResponse(c *gin.Context, data any, descriptionMsg string) {
 }
 
 func SendSinglePageResponse(c *gin.Context, data []interface{}, descriptionMsg string, paging dto.Paging) {
-	c.JSON(http.StatusCreated, &PagedResponse{
+	c.JSON(http.StatusOK, &PagedResponse{
 		Status: Status{
-			Code: http.StatusCreated,
+			Code: http.StatusOK,
 			Description: descriptionMsg,
 		},
 		Data: data,

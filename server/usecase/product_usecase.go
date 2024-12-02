@@ -4,13 +4,14 @@ import (
 	"math"
 	"server/model"
 	"server/model/dto"
+	"server/model/dto/response"
 	"server/repository"
 )
 
 type ProductUsecase interface {
 	CreateProduct(newProduct model.Product) (model.Product, error)
 	GetProduct(order string, sort string, page int, limit int) ([]interface{}, dto.Paging, error)
-	UpdateProductById(updatedProduct model.Product) (model.Product, error)
+	UpdateProductById(updatedProduct model.Product) (response.UpdatedProductResponse, error)
 	DeleteProductById(id string) error
 }
 
@@ -40,8 +41,20 @@ func (uc *productUsecase) GetProduct(order string, sort string, page int, limit 
 	return data, paging, nil
 }
 
-func (uc *productUsecase) UpdateProductById(updatedProduct model.Product) (model.Product, error){
-	return uc.repo.UpdateProductById(updatedProduct)
+func (uc *productUsecase) UpdateProductById(updatedProduct model.Product) (response.UpdatedProductResponse, error){
+	data, err := uc.repo.UpdateProductById(updatedProduct)
+
+	if err != nil {
+		return response.UpdatedProductResponse{}, err
+	}
+
+	res := response.UpdatedProductResponse {
+		Id: data.Id,
+		Price: data.Price,
+		Name: data.Name,
+	}
+
+	return res, nil
 }
 
 func (uc *productUsecase) DeleteProductById(id string) error{
