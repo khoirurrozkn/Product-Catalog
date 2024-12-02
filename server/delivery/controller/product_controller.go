@@ -3,19 +3,19 @@ package controller
 import (
 	"net/http"
 	"server/model"
-	"server/model/dto"
 	"server/model/dto/response"
 	"server/usecase"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ProductController struct {
-	uc usecase.ProductUsecase
+	pu usecase.ProductUsecase
 	rg *gin.RouterGroup
 }
 
-func (cc *ProductController) CreateHandler(c *gin.Context) {
+func (pc *ProductController) CreateHandler(c *gin.Context) {
 	var newProduct model.Product
 
 	if err := c.ShouldBindJSON(&newProduct); err != nil {
@@ -28,7 +28,7 @@ func (cc *ProductController) CreateHandler(c *gin.Context) {
 		return
 	}
 
-	data, err := cc.uc.CreateProduct(newProduct)
+	data, err := pc.pu.CreateProduct(newProduct)
 	if err != nil {
 		response.SendSingleResponseError(
 			c, 
@@ -46,11 +46,50 @@ func (cc *ProductController) CreateHandler(c *gin.Context) {
 	)
 }
 
-func (cc *ProductController) getAllHandler(c *gin.Context) {
-    product, err := cc.uc.GetProduct()
+func (pc *ProductController) getAllHandler(c *gin.Context) {
+	order := c.DefaultQuery("order", "created_at")
+	sort := c.DefaultQuery("sort", "DESC")
+	limit := 2
+	page, err := strconv.Atoi( c.DefaultQuery("page", "1") )
+
+	if err != nil {
+		response.SendSingleResponseError(
+			c,
+			http.StatusBadRequest,
+			err.Error(),
+		)
+
+        return
+    }
+
+	validOrderBy := map[string]bool{
+		"price":   true,
+		"created_at": true,
+	}
+	
+	validSort := map[string]bool{
+		"ASC":  true,
+		"DESC": true,
+	}
+
+	if valid := validOrderBy[order]; !valid {
+		order = "created_at"
+	}
+	
+	if valid := validSort[sort]; !valid {
+		sort = "DESC"
+	}
+
+	product, paging, err := pc.pu.GetProduct(
+		order,
+		sort,
+		page,
+		limit,
+	)
+
     if err != nil {
 		response.SendSingleResponseError(
-			c, 
+			c,
 			http.StatusBadRequest,
 			err.Error(),
 		)
@@ -62,11 +101,11 @@ func (cc *ProductController) getAllHandler(c *gin.Context) {
 		c,
 		product,
 		"Success get list Product pagination",
-		dto.Paging{},
+		paging,
 	)
 }
 
-func (cc *ProductController) updateHandler(c *gin.Context){
+func (pc *ProductController) updateHandler(c *gin.Context){
 	var updatedProduct model.Product
 	if err := c.ShouldBindJSON(&updatedProduct); err != nil {
 		response.SendSingleResponseError(
@@ -78,7 +117,7 @@ func (cc *ProductController) updateHandler(c *gin.Context){
         return
 	}
 
-	data, err := cc.uc.UpdateProductById(updatedProduct)
+	data, err := pc.pu.UpdateProductById(updatedProduct)
 	if err != nil {
 		response.SendSingleResponseError(
 			c, 
@@ -96,10 +135,10 @@ func (cc *ProductController) updateHandler(c *gin.Context){
 	)
 }
 
-func (cc *ProductController) deleteByIdHandler(c *gin.Context){
+func (pc *ProductController) deleteByIdHandler(c *gin.Context){
 	idProduct := c.Param("id")
 
-	err := cc.uc.DeleteProductById(idProduct)
+	data, err := pc.pu.DeleteProductById(idProduct)
 	if err != nil {
 		response.SendSingleResponseError(
 			c, 
@@ -112,22 +151,22 @@ func (cc *ProductController) deleteByIdHandler(c *gin.Context){
 
 	response.SendSingleResponse(
 		c,
-		nil,
+		data,
 		"Success deleted Product",
 	)
 }
 
-func (cc *ProductController) Route(){
-	router := cc.rg.Group("/product")
-	router.POST("", cc.CreateHandler)
-	router.GET("", cc.getAllHandler)
-	router.PUT("", cc.updateHandler)
-	router.DELETE("/:id", cc.deleteByIdHandler)
+func (pc *ProductController) Route(){
+	router := pc.rg.Group("/product")
+	router.POST("", pc.CreateHandler)
+	router.GET("", pc.getAllHandler)
+	router.PUT("", pc.updateHandler)
+	router.DELETE("/:id", pc.deleteByIdHandler)
 }
 
-func NewProductController(uc usecase.ProductUsecase, routerGroup *gin.RouterGroup) *ProductController {
+func NewProductController(pu usecase.ProductUsecase, routerGroup *gin.RouterGroup) *ProductController {
 	return &ProductController{
-		uc: uc,
+		pu: pu,
 		rg: routerGroup,
 	}
 }

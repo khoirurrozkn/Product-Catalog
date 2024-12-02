@@ -11,75 +11,87 @@ import (
 
 type ProductRepository interface{
 	CreateProduct(NewProduct model.Product) (model.Product, error)
-	GetProduct() ([]interface{}, error)
+	GetProduct(order string, sort string, limit int, offset int) ([]any, int, error)
 	UpdateProductById(updatedProduct model.Product) (model.Product, error)
-	DeleteProductById(id string) error
+	DeleteProductById(id string) (string, error)
 }
 
 type productRepository struct {
 	db *sql.DB
 }
 
-func (cr *productRepository) CreateProduct(NewProduct model.Product) (model.Product, error) {
+func (pr *productRepository) CreateProduct(NewProduct model.Product) (model.Product, error) {
 	NewProduct.Id = uuid.NewString()
 	
-	_, err := cr.db.Exec(utils.INSERT_PRODUCT,
+	data := model.Product{}
+	err := pr.db.QueryRow(utils.INSERT_PRODUCT,
 		NewProduct.Id,
+		NewProduct.ImgUrl,
 		NewProduct.Price,
 		NewProduct.Name,
-	)
+	).Scan(&data.Id, &data.ImgUrl, &data.Price, &data.Name, &data.CreatedAt)
 
 	if err != nil {
 		return model.Product{}, err
 	}
 
-	return NewProduct, err
+	return data, err
 }
 
-func (cr *productRepository) GetProduct() ([]interface{}, error){
+func (pr *productRepository) GetProduct(order string, sort string, limit int, offset int) ([]any, int, error){
 
-	rows, err := cr.db.Query(utils.SELECT_PRODUCT)
+	query := fmt.Sprintf(utils.SELECT_PRODUCT_WITH_PAGING, order, sort)
+
+	rows, err := pr.db.Query(query, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 	defer rows.Close()
 
-	var products []interface{}
+	var products []any
 	for rows.Next() {
 		var product model.Product
 		err = rows.Scan(
-			&product.Id,			
+			&product.Id,		
+			&product.ImgUrl,	
 			&product.Price,
 			&product.Name,
+			&product.CreatedAt,
 		)
 
 		if err != nil {
-			return nil, err
+			return nil, -1, err
 		}
 
 		products = append(products, product)
 	}
 
-	return products, err
+	var totalRows int
+	err = pr.db.QueryRow(utils.SELECT_COUNT_PRODUCT).Scan(&totalRows)
+	if err != nil {
+		return nil, -1, err
+	}
+
+	return products, totalRows, nil
 }
 
-func (cr *productRepository) UpdateProductById(updatedProduct model.Product) (model.Product, error){
-	_, err := cr.db.Exec(utils.UPDATE_PRODUCT_BY_ID, updatedProduct.Id, updatedProduct.Price, updatedProduct.Name)
+func (pr *productRepository) UpdateProductById(updatedProduct model.Product) (model.Product, error){
+	_, err := pr.db.Exec(utils.UPDATE_PRODUCT_BY_ID, updatedProduct.Id, updatedProduct.ImgUrl, updatedProduct.Price, updatedProduct.Name)
 
 	if err != nil {
-		return model.Product{}, fmt.Errorf("invalid request body")
+		return model.Product{}, err
 	}
 
 	return updatedProduct, nil
 }
 
-func (cr *productRepository) DeleteProductById(id string) error{
-	_, err := cr.db.Query(utils.DELETE_PRODUCT_BY_ID, id)
+func (pr *productRepository) DeleteProductById(id string) (string, error){
+	_, err := pr.db.Query(utils.DELETE_PRODUCT_BY_ID, id)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return id, nil
 }
 
 func NewProductRepository(db *sql.DB) ProductRepository {

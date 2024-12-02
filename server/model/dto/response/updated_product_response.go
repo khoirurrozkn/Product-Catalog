@@ -1,11 +1,8 @@
-package model
+package response
 
-import "time"
-
-type Product struct{
+type UpdatedProductResponse struct {
 	Id string `json:"id"`
 	ImgUrl string `json:"img_url"`
 	Price int `json:"price"`
 	Name string `json:"name"`
-	CreatedAt time.Time `json:"created_at"`
 }

@@ -9,11 +9,11 @@ type Status struct{
 
 type PagedResponse struct {
 	Status Status `json:"status"`
-	Data   []interface{} `json:"data"`
+	Data   []any `json:"data"`
 	Paging dto.Paging `json:"paging"`
 }
 
 type SingleResponse struct{
 	Status Status `json:"status"`
-	Data interface{} `json:"data"`
+	Data any `json:"data"`
 }
