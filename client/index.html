@@ -62,12 +62,70 @@
 
         @keyframes scroll {
             to {
-            transform: translateX(calc(-100%));
+                transform: translateX(calc(-100%));
             }
         }
 
         .bag {
-            transition: 0.05s ease transform;
+            transition: 0.7s ease transform;
+        }
+        .bag p {
+            transition: 1s ease opacity;
+            opacity: 0;
+        }
+        
+        .bag.show p {
+            opacity: 1;
+        }
+
+        .bag-top {
+            transform: translateY(0);
+        }
+        .bag-top.show {
+            transform: translateY(-25%);
+        }
+        .bag-top img {
+            transition: 0.7s ease all;
+        }
+        .bag-top.show img{
+            scale: 1.1;
+        }
+
+
+
+        .bag-left {
+            transform: translateX(0);
+        }
+        .bag-left.show {
+            transform: translateX(-60%);
+        }
+        .bag-left img {
+            transition: 0.7s ease all;
+        }
+        .bag-left.show img{
+            rotate: 20deg;
+            scale: 1.1;
+        }
+
+
+
+        .bag-right {
+            transition: 0.7s ease all 0.7s !important;
+            transform: translateX(0);
+        }
+        .bag-right.show {
+            transform: translateX(70%);
+        }
+        .bag p {
+            transition: 1s ease opacity 0.7s !important;
+            opacity: 0;
+        }
+        .bag-right img {
+            transition: 0.7s ease all 0.7s !important;
+        }
+        .bag-right.show img{
+            rotate: 20deg;
+            scale: 1.1;
         }
     </style>
     <!-- <nav class="fixed z-[100] backdrop-blur top-0 left-0 w-screen h-[30px]">
@@ -85,7 +143,7 @@
                 <a href="" class="text-white text-opacity-[80%]">Contact</a>
             </div>
         </div>
-        <h1 class="text-white text-center pt-[10vh]">
+        <h1 class="text-white text-center pt-[13vh]">
             <span class="text-[130px] leading-[110%]">Mewing </span>
             <span class="text-[130px] leading-[110%] hatton ms-[10px]">Gear</span>
             <br>
@@ -94,51 +152,51 @@
             <span class="text-[40px]">Spirit.</span>
         </h1>
 
-        <div class="absolute flex items-center gap-[30px] left-[10%] bottom-[8%]">
+        <div class="absolute flex items-center gap-[30px] left-[8%] bottom-[8%]">
             <div>
-                <p class="hatton text-[35px] text-white">
+                <p class="hatton text-[30px] text-white">
                     25% OFF
                 </p>
-                <p class="until text-white text-[20px] mt-[20px]">
+                <p class="until text-white text-[18px] mt-[20px]">
                     UNTIL
                 </p>
-                <p id="time" class="text-white text-[35px]">
+                <p id="time" class="text-white text-[30px]">
                     <!-- FIELD AT SCRIPT -->
                 </p>
             </div>
             <button class="bg-[#E9E5CE] w-[150px] text-black rounded-full aspect-square hatton flex items-center justify-center">
-                See Product
+                Disc Product
             </button>
         </div>
 
-        <div aria-hidden="true" class="absolute text-white flex gap-[30px] bg-white bg-opacity-[13%] backdrop-blur-[2px] py-[20px] px-[30px] right-[10%] bottom-[8%]">
-            <img id="bag" class="bag bg-black bg-opacity-[50%] w-[150px] aspect-square object-cover block" src="./img/bag.png" alt="">
+        <div aria-hidden="true" class="absolute text-white flex gap-[30px] bg-white bg-opacity-[13%] backdrop-blur-[2px] py-[20px] px-[30px] right-[8%] bottom-[8%]">
+            <img id="bag" class="bag bg-black bg-opacity-[50%] w-[140px] aspect-square object-cover block" src="./img/bag.png" alt="">
             <div>
-                <p class="hatton text-[20px] pb-[8px]">
+                <p class="hatton text-[18px] pb-[8px]">
                     ● New Product
                 </p>
-                <p class="mt-[30px] text-[20px]">
+                <p class="mt-[30px] text-[18px]">
                     ANTI JAMET BAG
                 </p>
-                <p class="mt-[10px] text-[20px] border border-[#ffffff80] text-center py-[3px] px-[10px] block">
+                <p class="mt-[10px] text-[18px] border border-[#ffffff80] text-center py-[3px] px-[10px] block">
                     Rp. 999.999,00
                 </p>
             </div>
         </div>
     </div>
 
-    <div class="flex items-center justify-between px-[5%] pt-[140px]">
+    <div class="flex items-center justify-between px-[5%] pt-[150px]">
         <h2 class="w-[30%]">
             <span class="text-[60px] leading-[120%] text-black text-opacity-[80%]">Unlock Your </span>
             <span class="hatton text-[100px] leading-[120%]">Sigma</span>
         </h2>
-        <p class="text-[30px] text-black text-opacity-[70%] w-[750px] leading-[140%] indent-[40px]">
+        <p class="text-[28px] text-black text-opacity-[80%] w-[750px] leading-[140%] indent-[40px]">
             We are here for you, the true Sigma elite! Mewing Gear <br> designs exclusive tools crafted to enhance your aura and charisma from level 70 to 999+, 
             Not only do they support your activities, but they also boost your adventurous spirit and confidence to new heights.
         </p>
     </div>
 
-    <div class="h-[300vh] gap-[20px] relative mt-[45px]">
+    <div class="relative mt-[60px] h-[/200vh]">
         <div aria-hidden="true" class="absolute left-0 mt-[130px] w-full stock-ticker flex overflow-hidden">
             <ul>
                 <li><span class="hatton text-[130px] text-black text-opacity-[20%]">No Skibidi</span></li>
@@ -162,28 +220,81 @@
             </ul>
         </div>
 
+        <div id="trig-bag-1" class="absolute w-full mt-[120vh]"></div>
+        <div id="trig-bag-2" class="absolute w-full mt-[90vh]"></div>
+
         <div aria-hidden="true" class="sticky transform top-[20%] translate-x-[-50%] left-[50%] z-[20] w-[350px] w-[/25vw] aspect-[3/3.5]">
-            <!-- <img id="bag" class="bag w-full h-full object-cover block" src="./img/bag.png" alt=""> -->
-            <div>
-                <img id="bag" class="bag absolute w-full h-full object-cover block" src="./img/bag-top.png" alt="">
-                <!-- <p class="absolute">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, laudantium.</p> -->
+            <div class="bag bag-top flex items-start absolute">
+                <img class="w-[350px] aspect-[3/3.5] object-cover block" src="./img/bag-top.png" alt="">
+                <div class="w-[720px] mt-[50px] ms-[-4%] flex gap-[20px] items-center">
+                    <p class="text-[70px] hatton mt-[15px]">
+                        3
+                    </p>
+                    <p class="text-[22px] leading-[140%] indent-[20px]">
+                       Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, laudantium. 
+                    </p>
+                </div>
             </div>
 
-            <div>
-                <img id="bag" class="bag absolute w-full h-full object-cover block" src="./img/bag-mid.png" alt="">
-                <!-- <p class="absolute">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, laudantium.</p> -->
+            <div class="bag bag-mid absolute">
+                <img class="w-[350px] aspect-[3/3.5] object-cover block" src="./img/bag-mid.png" alt="">
             </div>
 
-            <div>
-                <img id="bag" class="bag absolute w-full h-full object-cover block" src="./img/bag-left.png" alt="">
-                <!-- <p class="absolute">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, laudantium.</p> -->
+            <div class="bag bag-left absolute">
+                <img class="w-[350px] aspect-[3/3.5] object-cover block" src="./img/bag-left.png" alt="">
+                <div class="w-[350px] ms-[-20%] mt-[-10%] flex gap-[20px] items-center">
+                    <p class="text-[70px] hatton mt-[15px]">
+                        1
+                    </p>
+                    <p class="text-[22px] leading-[140%] indent-[20px]">
+                       Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, laudantium. 
+                    </p>
+                </div>
             </div>
 
-            <div>
-                <img id="bag" class="bag absolute w-full h-full object-cover block" src="./img/bag-right.png" alt="">
-                <!-- <p class="absolute">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, laudantium.</p> -->
+            <div class="bag bag-right absolute">
+                <img class="w-[350px] aspect-[3/3.5] object-cover" src="./img/bag-right.png" alt="">
+                <div class="w-[350px] ms-[40%] flex gap-[20px] items-center">
+                    <p class="text-[70px] hatton mt-[15px]">
+                        2
+                    </p>
+                    <p class="text-[22px] leading-[140%] indent-[20px]">
+                       Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, laudantium. 
+                    </p>
+                </div>
             </div>
         </div>
+
+        <div class="mt-[100vh] flex justify-between px-[5%]">
+            <img class="w-[350px] aspect-[3/3.5] object-cover block" src="./img/bag.png" alt="">
+            <img class="w-[350px] aspect-[3/3.5] object-cover block" src="./img/bag.png" alt="">
+        </div>
+
+    </div>
+
+    <div class="pt-[100px]">
+
+        <div class="flex flex-wrap items-center justify-around">
+            <p class="w-[50%] text-[28px] text-black text-opacity-[80%] w-[750px] leading-[140%] indent-[40px]">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, sit commodi asperiores consequatur ab perspiciatis tempore reiciendis accusantium sequi voluptas!
+            </p>
+            <button class="bg-black text-white w-[170px] text-black rounded-full aspect-square hatton flex items-center justify-center">
+                All Product
+            </button>
+        </div>
+
+        <div class="flex flex-wrap items-start justify-evenly mt-[100px]">
+            <img class="w-[50%] aspect-square object-cover" src="img/background-hero-landing-page2.jpg" alt="">
+            <img class="w-[50%] aspect-square object-cover" src="img/background-hero-landing-page2.jpg" alt="">
+            <img class="w-[50%] aspect-square object-cover" src="img/background-hero-landing-page2.jpg" alt="">
+            <img class="w-[50%] aspect-square object-cover" src="img/background-hero-landing-page2.jpg" alt="">
+            <img class="w-[50%] aspect-square object-cover" src="img/background-hero-landing-page2.jpg" alt="">
+            <img class="w-[50%] aspect-square object-cover" src="img/background-hero-landing-page2.jpg" alt="">
+            <button class="bg-black text-white w-[170px] text-black rounded-full aspect-square hatton flex items-center justify-center mt-[100px]">
+                Galery Mewingers
+            </button>
+        </div>
+
     </div>
 
     <script>
@@ -213,28 +324,45 @@
 
         updateCountdown();
         
-
-        const bag = document.getElementById('bag')
-        const trigBag = document.getElementById('trig-bag')
+        const bagTop = document.querySelector('.bag-top')
+        const bagLeft = document.querySelector('.bag-left')
+        const bagRight = document.querySelector('.bag-right')
+        const trigBag1 = document.getElementById('trig-bag-1')
+        const trigBag2 = document.getElementById('trig-bag-2')
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('show')
+                    // entry.target.classList.add('show')
 
-                    if (entry.target === trigBag) {
-                        // window.addEventListener('scroll', () => parallaxEffect())
+                    if (entry.target === trigBag1) {
+                        bagTop.classList.add('show')
+                    }
+
+                    if (entry.target === trigBag2) {
+                        bagLeft.classList.add('show')
+                        bagRight.classList.add('show')
                     }
 
                 }else {
-                    entry.target.classList.remove('show')
+                    
+                    if (entry.target === trigBag1) {
+                        bagTop.classList.remove('show')
+                    }
+
+                    if (entry.target === trigBag2) {
+                        bagLeft.classList.remove('show')
+                        bagRight.classList.remove('show')
+                    }
+
                 }
             })
         }, {
             threshold: 0.1
         })
 
-        observer.observe(trigBag);
+        observer.observe(trigBag1);
+        observer.observe(trigBag2);
 
         // function parallaxEffect() {
         //     const scrollPosition = window.scrollY;
