@@ -11,6 +11,10 @@
         @apply w-0;
     }
 
+    input:focus {
+        outline: none;
+    }
+
     @media (min-width: 820px) {
         *{
             @apply text-[18px];
