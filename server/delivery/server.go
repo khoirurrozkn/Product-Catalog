@@ -12,6 +12,7 @@ import (
 )
 
 type Server struct {
+	userUc usecase.UserUsecase
 	productUc usecase.ProductUsecase
 
 	engine *gin.Engine
@@ -20,6 +21,7 @@ type Server struct {
 }
 
 func (s *Server) setupController(){
+	controller.NewUserController(s.userUc, s.routerGroup).Route()
 	controller.NewProductController(s.productUc, s.routerGroup).Route()
 
 }
@@ -42,6 +44,9 @@ func NewServer() *Server {
 		log.Fatal("db connection : ", err.Error())
 	}
 
+	userRepo := repository.NewUserRepository(db.Conn())
+	userUc := usecase.NewUserUsecase(userRepo)
+
 	productRepo := repository.NewProductRepository(db.Conn())
 	productUc := usecase.NewProductUsecase(productRepo)
 
@@ -50,6 +55,7 @@ func NewServer() *Server {
 	routerGroup := engine.RouterGroup.Group("/api")
 
 	return &Server{
+		userUc: userUc,
 		productUc: productUc,
 
 		engine: engine,
