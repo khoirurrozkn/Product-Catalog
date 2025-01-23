@@ -2,9 +2,10 @@ package controller
 
 import (
 	"net/http"
-	"server/model"
+	"server/model/dto/request"
 	"server/model/dto/response"
 	"server/usecase"
+	"server/utils"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -15,8 +16,46 @@ type UserController struct {
 	rg *gin.RouterGroup
 }
 
+func (pc *UserController) loginHandler(c *gin.Context) {
+	var user request.UserLogin
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		response.SendSingleResponseError(
+			c,
+			http.StatusBadRequest,
+			err.Error(),
+		)
+
+		return
+	}
+
+	var data response.UserResponse
+	var err error
+	if utils.IsEmail(user.EmailOrNickname) {
+		data, err = pc.pu.LoginWithEmail(user)
+	} else {
+		data, err = pc.pu.LoginWithNickname(user)
+	}
+
+	if err != nil {
+		response.SendSingleResponseError(
+			c,
+			http.StatusBadRequest,
+			err.Error(),
+		)
+
+		return
+	}
+
+	response.SendSingleResponseCreated(
+		c,
+		data,
+		"Success Login User",
+	)
+}
+
 func (pc *UserController) CreateHandler(c *gin.Context) {
-	var newUser model.User
+	var newUser request.UserRegister
 
 	if err := c.ShouldBindJSON(&newUser); err != nil {
 		response.SendSingleResponseError(
@@ -128,7 +167,8 @@ func (pc *UserController) deleteByIdHandler(c *gin.Context) {
 
 func (pc *UserController) Route() {
 	router := pc.rg.Group("/user")
-	router.POST("", pc.CreateHandler)
+	router.POST("/login", pc.loginHandler)
+	router.POST("/register", pc.CreateHandler)
 	router.GET("", pc.getAllHandler)
 	router.DELETE("/:id", pc.deleteByIdHandler)
 }

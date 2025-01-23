@@ -15,6 +15,8 @@ const (
 	UPDATE_PRODUCT_BY_ID       = "UPDATE product SET img_url = $2, price = $3, name = $4 WHERE id = $1"
 	DELETE_PRODUCT_BY_ID       = "DELETE FROM product WHERE id = $1"
 
+	SELECT_USER_BY_EMAIL = "SELECT id, email, nickname, password, created_at, updated_at FROM users WHERE email = $1"
+	SELECT_USER_BY_NICKNAME = "SELECT id, email, nickname, password, created_at, updated_at FROM users WHERE nickname = $1"
 	INSERT_USER = `
 		INSERT INTO users (
 			id, 
@@ -23,7 +25,7 @@ const (
 			password,
 			created_at,
 			updated_at
-		) VALUES ($1, $2, $3, $4)
+		) VALUES ($1, $2, $3, $4, $5, $6)
 	`
 	SELECT_USER_WITH_PAGING = "SELECT id, email, nickname, created_at, updated_at FROM users ORDER BY %s %s LIMIT $1 OFFSET $2"
 	SELECT_COUNT_USER       = "SELECT COUNT(id) FROM users"

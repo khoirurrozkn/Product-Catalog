@@ -1,8 +1,11 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -18,6 +21,13 @@ type DbConfig struct {
 
 type Config struct {
 	DbConfig
+	TokenConfig
+}
+
+type TokenConfig struct {
+	IssuerName      string
+	JwtSignatureKey []byte
+	JwtLifeTime     time.Duration
 }
 
 func (c *Config) ReadConfig() error {
@@ -33,6 +43,22 @@ func (c *Config) ReadConfig() error {
 		User: os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASS"),
 		Driver: os.Getenv("DB_DRIVER"),
+	}
+
+	token_lifetime, err := strconv.Atoi(os.Getenv("TOKEN_LIFE_TIME"))
+	if err != nil {
+		return errors.New("fail parse token life time")
+	}
+
+	pemKey, err := os.ReadFile("ec-secp256k1-priv-key.pem")
+	if err != nil {
+		return errors.New("cannot read .pem key")
+	}
+
+	c.TokenConfig = TokenConfig{
+		IssuerName:      os.Getenv("ISSUER_NAME"),
+		JwtSignatureKey: pemKey,
+		JwtLifeTime:     time.Duration(token_lifetime) * time.Hour,
 	}
 
 	if c.DbConfig.Host == "" || c.DbConfig.Port == "" || c.DbConfig.DbName == "" || 

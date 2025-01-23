@@ -1,3 +1,4 @@
 .env
 test.go
 test.txt
+ec-secp256k1-priv-key.pem

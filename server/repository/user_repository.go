@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"server/model"
+	"server/model/dto/request"
 	"server/model/dto/response"
 	"server/utils"
 	"time"
@@ -12,7 +13,10 @@ import (
 )
 
 type UserRepository interface {
-	CreateUser(NewUser model.User) (response.UserResponse, error)
+	GetUserByEmail(email string) (model.User, error)
+	GetUserByNickname(nickname string) (model.User, error)
+
+	CreateUser(NewUser request.UserRegister) (response.UserResponse, error)
 	GetAllUser(order string, sort string, limit int, offset int) ([]any, int, error)
 	DeleteUserById(id string) (string, error)
 }
@@ -21,12 +25,46 @@ type userRepository struct {
 	db *sql.DB
 }
 
-func (pr *userRepository) CreateUser(NewUser model.User) (response.UserResponse, error) {
+func (pr *userRepository) GetUserByEmail(email string) (model.User, error) {
 
-	NewUser.Id = uuid.NewString()
+	var user model.User
+	err := pr.db.QueryRow(utils.SELECT_USER_BY_EMAIL, email).Scan(
+		&user.Id,
+		&user.Email,
+		&user.Nickname,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		return model.User{}, err
+	}
+	return user, err
+}
+
+func (pr *userRepository) GetUserByNickname(nickname string) (model.User, error) {
+
+	var user model.User
+	err := pr.db.QueryRow(utils.SELECT_USER_BY_NICKNAME, nickname).Scan(
+		&user.Id,
+		&user.Email,
+		&user.Nickname,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		return model.User{}, err
+	}
+	return user, err
+}
+
+func (pr *userRepository) CreateUser(NewUser request.UserRegister) (response.UserResponse, error) {
+
+	id := uuid.NewString()
 	now := time.Now().UTC()
 	_, err := pr.db.Exec(utils.INSERT_USER,
-		NewUser.Id,
+		id,
 		NewUser.Email,
 		NewUser.Nickname,
 		NewUser.Password,
@@ -37,7 +75,7 @@ func (pr *userRepository) CreateUser(NewUser model.User) (response.UserResponse,
 		return response.UserResponse{}, err
 	}
 	user := response.UserResponse{
-		Id:        NewUser.Id,
+		Id:        id,
 		Email:     NewUser.Email,
 		Nickname:  NewUser.Nickname,
 		CreatedAt: now,
