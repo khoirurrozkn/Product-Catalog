@@ -51,8 +51,11 @@ func NewServer() *Server {
 	jwt_token := common.NewJwtToken(cfg.TokenConfig)
 	authMiddleware := middleware.NewAuthMiddleware(jwt_token)
 
+	userRefreshTokenRepo := repository.NewUserRefreshTokenRepository(db.Conn())
+	userRefreshTokenUc := usecase.NewUserRefreshTokenUsecase(userRefreshTokenRepo, jwt_token)
+
 	userRepo := repository.NewUserRepository(db.Conn())
-	userUc := usecase.NewUserUsecase(userRepo, jwt_token)
+	userUc := usecase.NewUserUsecase(userRepo, userRefreshTokenUc, jwt_token)
 
 	productRepo := repository.NewProductRepository(db.Conn())
 	productUc := usecase.NewProductUsecase(productRepo)

@@ -13,8 +13,7 @@ import (
 )
 
 type UserUsecase interface {
-	LoginWithEmail(user request.UserLogin) (response.UserResponse, error)
-	LoginWithNickname(user request.UserLogin) (response.UserResponse, error)
+	LoginUser(user request.UserLogin) (response.UserCredential, error)
 
 	CreateUser(newUser request.UserRegister) (response.UserResponse, error)
 	GetAllUser(order string, sort string, page int, limit int) ([]any, dto.Paging, error)
@@ -23,55 +22,41 @@ type UserUsecase interface {
 
 type userUsecase struct {
 	repo repository.UserRepository
+	userRefreshToken UserRefreshTokenUsecase
 	jwtToken common.JwtToken
 }
 
-func (uu *userUsecase) LoginWithEmail(user request.UserLogin) (response.UserResponse, error){
+func (uu *userUsecase) LoginUser(user request.UserLogin) (response.UserCredential, error){
 
 	findUser, err := uu.repo.GetUserByEmail(user.EmailOrNickname)
 	if err != nil {
-		return response.UserResponse{}, err
+		return response.UserCredential{}, err
 	}
 
 	if valid := bcrypt.CompareHashAndPassword([]byte(findUser.Password), []byte(user.Password)); valid != nil {
-		return response.UserResponse{}, errors.New("incorrect password")
+		return response.UserCredential{}, errors.New("incorrect password")
 	}
 
-	data := response.UserResponse{
-		Id:        findUser.Id,
-		Email:     findUser.Email,
-		Nickname:  findUser.Nickname,
-		CreatedAt: findUser.CreatedAt,
-		UpdatedAt: findUser.UpdatedAt,
-	}
-	
-	return data, nil
-}
-
-func (uu *userUsecase) LoginWithNickname(user request.UserLogin) (response.UserResponse, error){
-
-	findUser, err := uu.repo.GetUserByNickname(user.EmailOrNickname)
+	accessToken, _, err := uu.jwtToken.GenerateTokenJwt(findUser.Id, "User", findUser.Email, "accessToken")
 	if err != nil {
-		return response.UserResponse{}, err
+		return response.UserCredential{}, err
 	}
 
-	if valid := bcrypt.CompareHashAndPassword([]byte(findUser.Password), []byte(user.Password)); valid != nil {
-		return response.UserResponse{}, errors.New("incorrect password")
-	}
-
-	access_token, err := uu.jwtToken.GenerateTokenJwt(findUser.Id, "wakwau", findUser.Email)
-
+	refreshToken, err := uu.userRefreshToken.CreateUserRefreshToken(findUser.Id, "User", findUser.Email, "refreshToken")
 	if err != nil {
-		return response.UserResponse{}, err
+		return response.UserCredential{}, err
 	}
 
-	data := response.UserResponse{
-		Id:        findUser.Id,
-		Email:     findUser.Email,
-		Nickname:  findUser.Nickname,
-		CreatedAt: findUser.CreatedAt,
-		UpdatedAt: findUser.UpdatedAt,
-		AccessToken: access_token,
+	data := response.UserCredential{
+		User: response.UserResponse{
+			Id:        findUser.Id,
+			Email:     findUser.Email,
+			Nickname:  findUser.Nickname,
+			CreatedAt: findUser.CreatedAt,
+			UpdatedAt: findUser.UpdatedAt,
+		},
+		AccessToken: accessToken,
+		RefreshToken: refreshToken,
 	}
 	
 	return data, nil
@@ -111,9 +96,10 @@ func (uu *userUsecase) DeleteUserById(id string) (string, error) {
 	return uu.repo.DeleteUserById(id)
 }
 
-func NewUserUsecase(repo repository.UserRepository, jwt_token common.JwtToken) UserUsecase {
+func NewUserUsecase(repo repository.UserRepository, userRefreshToken UserRefreshTokenUsecase, jwt_token common.JwtToken) UserUsecase {
 	return &userUsecase{
 		repo: repo,
+		userRefreshToken: userRefreshToken,
 		jwtToken: jwt_token,
 	}
 }

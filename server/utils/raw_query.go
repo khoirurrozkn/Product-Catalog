@@ -45,4 +45,6 @@ const (
 	SELECT_COUNT_FAVORITE       = "SELECT COUNT(id) FROM favorite"
 	SELECT_FAVORITE_BY_ID       = "SELECT id, user_id, product_id, created_at FROM favorite"
 	DELETE_FAVORITE_BY_ID       = "DELETE FROM favorite WHERE id = $1"
+
+	GET_USER_REFRESH_TOKEN_BY_TOKEN = "SELECT id, user_id, token, expires_at FROM refresh_token WHERE token"
 )

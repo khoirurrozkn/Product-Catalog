@@ -25,9 +25,10 @@ type Config struct {
 }
 
 type TokenConfig struct {
-	IssuerName      string
-	JwtSignatureKey []byte
-	JwtLifeTime     time.Duration
+	IssuerName           string
+	JwtSignatureKey      []byte
+	AccessTokenLifeTime  time.Duration
+	RefreshTokenLifeTime time.Duration
 }
 
 func (c *Config) ReadConfig() error {
@@ -37,15 +38,20 @@ func (c *Config) ReadConfig() error {
 	}
 
 	c.DbConfig = DbConfig{
-		Host: os.Getenv("DB_HOST"),
-		Port: os.Getenv("DB_PORT"),
-		DbName: os.Getenv("DB_NAME"),
-		User: os.Getenv("DB_USER"),
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		DbName:   os.Getenv("DB_NAME"),
+		User:     os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASS"),
-		Driver: os.Getenv("DB_DRIVER"),
+		Driver:   os.Getenv("DB_DRIVER"),
 	}
 
-	token_lifetime, err := strconv.Atoi(os.Getenv("TOKEN_LIFE_TIME"))
+	accessTokenLifetime, err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_LIFE_TIME"))
+	if err != nil {
+		return errors.New("fail parse token life time")
+	}
+
+	refreshTokenLifetime, err := strconv.Atoi(os.Getenv("REFRESH_TOKEN_LIFE_TIME"))
 	if err != nil {
 		return errors.New("fail parse token life time")
 	}
@@ -58,10 +64,11 @@ func (c *Config) ReadConfig() error {
 	c.TokenConfig = TokenConfig{
 		IssuerName:      os.Getenv("ISSUER_NAME"),
 		JwtSignatureKey: pemKey,
-		JwtLifeTime:     time.Duration(token_lifetime) * time.Hour,
+		AccessTokenLifeTime: time.Duration(accessTokenLifetime) * time.Hour,
+		RefreshTokenLifeTime: time.Duration(refreshTokenLifetime) * time.Hour,
 	}
 
-	if c.DbConfig.Host == "" || c.DbConfig.Port == "" || c.DbConfig.DbName == "" || 
+	if c.DbConfig.Host == "" || c.DbConfig.Port == "" || c.DbConfig.DbName == "" ||
 		c.DbConfig.User == "" || c.DbConfig.Password == "" || c.DbConfig.Driver == "" {
 
 		return fmt.Errorf("missing env")
@@ -70,7 +77,7 @@ func (c *Config) ReadConfig() error {
 	return nil
 }
 
-func NewConfig() ( *Config, error ) {
+func NewConfig() (*Config, error) {
 	cfg := &Config{}
 
 	if err := cfg.ReadConfig(); err != nil {

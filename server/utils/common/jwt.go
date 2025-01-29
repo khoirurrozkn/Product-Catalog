@@ -16,7 +16,7 @@ type JwtClaim struct {
 }
 
 type JwtToken interface {
-	GenerateTokenJwt(userId string, role string, email string) (string, error)
+	GenerateTokenJwt(userId string, role string, email string, tokenType string) (string, time.Duration, error)
 	VerifyToken(token string) (jwt.MapClaims, error)
 }
 
@@ -24,11 +24,19 @@ type jwtToken struct {
 	config config.TokenConfig
 }
 
-func (cfg *jwtToken) GenerateTokenJwt(userId string, role string, email string) (string, error) {
+func (cfg *jwtToken) GenerateTokenJwt(userId string, role string, email string, tokenType string) (string, time.Duration, error) {
+
+	var lifeTime time.Duration
+	if tokenType == "accessToken" {
+		lifeTime = cfg.config.AccessTokenLifeTime
+	}else {
+		lifeTime = cfg.config.RefreshTokenLifeTime
+	}
+
 	claims := JwtClaim{
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    cfg.config.IssuerName,
-			ExpiresAt: time.Now().UTC().Add(cfg.config.JwtLifeTime).Unix(),
+			ExpiresAt: time.Now().UTC().Add(lifeTime).Unix(),
 		},
 		UserId: userId,
 		Role:   role,
@@ -39,9 +47,9 @@ func (cfg *jwtToken) GenerateTokenJwt(userId string, role string, email string) 
 	signedToken, err := token.SignedString(cfg.config.JwtSignatureKey)
 
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
-	return signedToken, nil
+	return signedToken, lifeTime, nil
 }
 
 func (cfg *jwtToken) VerifyToken(token_string string) (jwt.MapClaims, error) {

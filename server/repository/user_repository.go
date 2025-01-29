@@ -14,7 +14,6 @@ import (
 
 type UserRepository interface {
 	GetUserByEmail(email string) (model.User, error)
-	GetUserByNickname(nickname string) (model.User, error)
 
 	CreateUser(NewUser request.UserRegister) (response.UserResponse, error)
 	GetAllUser(order string, sort string, limit int, offset int) ([]any, int, error)
@@ -29,23 +28,6 @@ func (pr *userRepository) GetUserByEmail(email string) (model.User, error) {
 
 	var user model.User
 	err := pr.db.QueryRow(utils.SELECT_USER_BY_EMAIL, email).Scan(
-		&user.Id,
-		&user.Email,
-		&user.Nickname,
-		&user.Password,
-		&user.CreatedAt,
-		&user.UpdatedAt,
-	)
-	if err != nil {
-		return model.User{}, err
-	}
-	return user, err
-}
-
-func (pr *userRepository) GetUserByNickname(nickname string) (model.User, error) {
-
-	var user model.User
-	err := pr.db.QueryRow(utils.SELECT_USER_BY_NICKNAME, nickname).Scan(
 		&user.Id,
 		&user.Email,
 		&user.Nickname,

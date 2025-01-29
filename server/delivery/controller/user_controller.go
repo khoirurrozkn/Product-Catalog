@@ -6,7 +6,6 @@ import (
 	"server/model/dto/request"
 	"server/model/dto/response"
 	"server/usecase"
-	"server/utils"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -31,13 +30,7 @@ func (pc *UserController) loginHandler(c *gin.Context) {
 		return
 	}
 
-	var data response.UserResponse
-	var err error
-	if utils.IsEmail(user.EmailOrNickname) {
-		data, err = pc.pu.LoginWithEmail(user)
-	} else {
-		data, err = pc.pu.LoginWithNickname(user)
-	}
+	data, err := pc.pu.LoginUser(user)
 
 	if err != nil {
 		response.SendSingleResponseError(
@@ -174,10 +167,6 @@ func (pc *UserController) Route() {
 	router.POST("/register", pc.CreateHandler)
 	router.GET("", pc.authMiddleware.RequireToken("admin"), pc.getAllHandler)
 	router.DELETE("/:id", pc.authMiddleware.RequireToken("user", "admin"), pc.deleteByIdHandler)
-
-
-	// router.GET("/testLog", pc.authMiddleware.RequireToken("user"), pc.testLog)
-
 }
 
 func NewUserController(pu usecase.UserUsecase, routerGroup *gin.RouterGroup, authMiddleware middleware.AuthMiddleware) *UserController {
