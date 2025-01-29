@@ -7,6 +7,7 @@ import (
 	"server/model/dto/request"
 	"server/model/dto/response"
 	"server/repository"
+	"server/utils/common"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -22,6 +23,7 @@ type UserUsecase interface {
 
 type userUsecase struct {
 	repo repository.UserRepository
+	jwtToken common.JwtToken
 }
 
 func (uu *userUsecase) LoginWithEmail(user request.UserLogin) (response.UserResponse, error){
@@ -57,12 +59,19 @@ func (uu *userUsecase) LoginWithNickname(user request.UserLogin) (response.UserR
 		return response.UserResponse{}, errors.New("incorrect password")
 	}
 
+	access_token, err := uu.jwtToken.GenerateTokenJwt(findUser.Id, "wakwau", findUser.Email)
+
+	if err != nil {
+		return response.UserResponse{}, err
+	}
+
 	data := response.UserResponse{
 		Id:        findUser.Id,
 		Email:     findUser.Email,
 		Nickname:  findUser.Nickname,
 		CreatedAt: findUser.CreatedAt,
 		UpdatedAt: findUser.UpdatedAt,
+		AccessToken: access_token,
 	}
 	
 	return data, nil
@@ -102,8 +111,9 @@ func (uu *userUsecase) DeleteUserById(id string) (string, error) {
 	return uu.repo.DeleteUserById(id)
 }
 
-func NewUserUsecase(repo repository.UserRepository) UserUsecase {
+func NewUserUsecase(repo repository.UserRepository, jwt_token common.JwtToken) UserUsecase {
 	return &userUsecase{
 		repo: repo,
+		jwtToken: jwt_token,
 	}
 }

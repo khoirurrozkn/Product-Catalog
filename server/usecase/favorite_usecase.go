@@ -4,11 +4,12 @@ import (
 	"math"
 	"server/model"
 	"server/model/dto"
+	"server/model/dto/request"
 	"server/repository"
 )
 
 type FavoriteUsecase interface {
-	CreateFavorite(newFavorite model.Favorite) (model.Favorite, error)
+	CreateFavorite(newFavorite request.Favorite) (model.Favorite, error)
 	GetAllFavorite(order string, sort string, page int, limit int) ([]any, dto.Paging, error)
 	DeleteFavoriteById(id string) (string, error)
 }
@@ -17,7 +18,7 @@ type favoriteUsecase struct {
 	repo repository.FavoriteRepository
 }
 
-func (pu *favoriteUsecase) CreateFavorite(newFavorite model.Favorite) (model.Favorite, error) {
+func (pu *favoriteUsecase) CreateFavorite(newFavorite request.Favorite) (model.Favorite, error) {
 	return pu.repo.CreateFavorite(newFavorite)
 }
 

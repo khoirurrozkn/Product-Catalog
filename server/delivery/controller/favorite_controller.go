@@ -2,7 +2,7 @@ package controller
 
 import (
 	"net/http"
-	"server/model"
+	"server/model/dto/request"
 	"server/model/dto/response"
 	"server/usecase"
 	"strconv"
@@ -16,7 +16,7 @@ type FavoriteController struct {
 }
 
 func (pc *FavoriteController) CreateHandler(c *gin.Context) {
-	var newFavorite model.Favorite
+	var newFavorite request.Favorite
 
 	if err := c.ShouldBindJSON(&newFavorite); err != nil {
 		response.SendSingleResponseError(
@@ -46,7 +46,7 @@ func (pc *FavoriteController) CreateHandler(c *gin.Context) {
 	)
 }
 
-func (pc *FavoriteController) getAllHandler(c *gin.Context) {
+func (pc *FavoriteController) getAllByIdUserHandler(c *gin.Context) {
 	order := c.DefaultQuery("order", "created_at")
 	sort := c.DefaultQuery("sort", "DESC")
 	limit := 1
@@ -127,8 +127,8 @@ func (pc *FavoriteController) deleteByIdHandler(c *gin.Context) {
 
 func (pc *FavoriteController) Route() {
 	router := pc.rg.Group("/favorite")
-	router.POST("", pc.CreateHandler)
-	router.GET("/", pc.getAllHandler)
+	router.POST("/", pc.CreateHandler)
+	router.GET("/", pc.getAllByIdUserHandler)
 	router.DELETE("/:id", pc.deleteByIdHandler)
 }
 

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"server/model"
+	"server/model/dto/request"
 	"server/utils"
 	"time"
 
@@ -11,7 +12,7 @@ import (
 )
 
 type FavoriteRepository interface {
-	CreateFavorite(NewFavorite model.Favorite) (model.Favorite, error)
+	CreateFavorite(NewFavorite request.Favorite) (model.Favorite, error)
 	GetAllFavorite(order string, sort string, limit int, offset int) ([]any, int, error)
 	DeleteFavoriteById(id string) (string, error)
 }
@@ -20,7 +21,7 @@ type favoriteRepository struct {
 	db *sql.DB
 }
 
-func (pr *favoriteRepository) CreateFavorite(NewFavorite model.Favorite) (model.Favorite, error) {
+func (pr *favoriteRepository) CreateFavorite(NewFavorite request.Favorite) (model.Favorite, error) {
 
 	NewFavorite.Id = uuid.NewString()
 	now := time.Now().UTC()

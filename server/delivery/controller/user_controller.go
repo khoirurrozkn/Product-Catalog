@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"server/middleware"
 	"server/model/dto/request"
 	"server/model/dto/response"
 	"server/usecase"
@@ -14,6 +15,7 @@ import (
 type UserController struct {
 	pu usecase.UserUsecase
 	rg *gin.RouterGroup
+	authMiddleware middleware.AuthMiddleware
 }
 
 func (pc *UserController) loginHandler(c *gin.Context) {
@@ -165,17 +167,23 @@ func (pc *UserController) deleteByIdHandler(c *gin.Context) {
 	)
 }
 
+
 func (pc *UserController) Route() {
 	router := pc.rg.Group("/user")
 	router.POST("/login", pc.loginHandler)
 	router.POST("/register", pc.CreateHandler)
-	router.GET("", pc.getAllHandler)
-	router.DELETE("/:id", pc.deleteByIdHandler)
+	router.GET("", pc.authMiddleware.RequireToken("admin"), pc.getAllHandler)
+	router.DELETE("/:id", pc.authMiddleware.RequireToken("user", "admin"), pc.deleteByIdHandler)
+
+
+	// router.GET("/testLog", pc.authMiddleware.RequireToken("user"), pc.testLog)
+
 }
 
-func NewUserController(pu usecase.UserUsecase, routerGroup *gin.RouterGroup) *UserController {
+func NewUserController(pu usecase.UserUsecase, routerGroup *gin.RouterGroup, authMiddleware middleware.AuthMiddleware) *UserController {
 	return &UserController{
 		pu: pu,
 		rg: routerGroup,
+		authMiddleware: authMiddleware,
 	}
 }

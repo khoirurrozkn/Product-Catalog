@@ -7,13 +7,16 @@ import (
 	"server/middleware"
 	"server/repository"
 	"server/usecase"
+	"server/utils/common"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
+	authMiddlware middleware.AuthMiddleware
 	userUc usecase.UserUsecase
 	productUc usecase.ProductUsecase
+	favoriteUc usecase.FavoriteUsecase
 
 	engine *gin.Engine
 	routerGroup *gin.RouterGroup
@@ -21,8 +24,9 @@ type Server struct {
 }
 
 func (s *Server) setupController(){
-	controller.NewUserController(s.userUc, s.routerGroup).Route()
+	controller.NewUserController(s.userUc, s.routerGroup, s.authMiddlware).Route()
 	controller.NewProductController(s.productUc, s.routerGroup).Route()
+	controller.NewFavoriteController(s.favoriteUc, s.routerGroup).Route()
 
 }
 
@@ -44,19 +48,27 @@ func NewServer() *Server {
 		log.Fatal("db connection : ", err.Error())
 	}
 
+	jwt_token := common.NewJwtToken(cfg.TokenConfig)
+	authMiddleware := middleware.NewAuthMiddleware(jwt_token)
+
 	userRepo := repository.NewUserRepository(db.Conn())
-	userUc := usecase.NewUserUsecase(userRepo)
+	userUc := usecase.NewUserUsecase(userRepo, jwt_token)
 
 	productRepo := repository.NewProductRepository(db.Conn())
 	productUc := usecase.NewProductUsecase(productRepo)
+
+	favoriteRepo := repository.NewFavoriteRepository(db.Conn())
+	favoriteUc := usecase.NewFavoriteUsecase(favoriteRepo)
 
 	engine := gin.Default()
 	engine.Use(middleware.NewCorsMiddleware())
 	routerGroup := engine.RouterGroup.Group("/api")
 
 	return &Server{
+		authMiddlware: authMiddleware,
 		userUc: userUc,
 		productUc: productUc,
+		favoriteUc: favoriteUc,
 
 		engine: engine,
 		routerGroup: routerGroup,
