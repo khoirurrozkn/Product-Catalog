@@ -3,12 +3,15 @@ package usecase
 import (
 	"errors"
 	"math"
+	"server/model"
 	"server/model/dto"
 	"server/model/dto/request"
 	"server/model/dto/response"
 	"server/repository"
 	"server/utils/common"
+	"time"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -46,8 +49,8 @@ func (uu *userUsecase) LoginUser(user request.UserLogin) (response.UserCredentia
 	if err != nil {
 		return response.UserCredential{}, err
 	}
-
-	data := response.UserCredential{
+	
+	return response.UserCredential{
 		User: response.UserResponse{
 			Id:        findUser.Id,
 			Email:     findUser.Email,
@@ -57,9 +60,7 @@ func (uu *userUsecase) LoginUser(user request.UserLogin) (response.UserCredentia
 		},
 		AccessToken: accessToken,
 		RefreshToken: refreshToken,
-	}
-	
-	return data, nil
+	}, nil
 }
 
 func (uu *userUsecase) CreateUser(newUser request.UserRegister) (response.UserResponse, error) {
@@ -69,9 +70,28 @@ func (uu *userUsecase) CreateUser(newUser request.UserRegister) (response.UserRe
 		return response.UserResponse{}, err
 	}
 
-	newUser.Password = string(hashedPassword)
+	now := time.Now().UTC()
+	data := model.User {
+		Id: uuid.NewString(),
+		Email: newUser.Email,
+		Nickname: newUser.Nickname,
+		Password: string(hashedPassword),
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
 
-	return uu.repo.CreateUser(newUser)
+	err = uu.repo.CreateUser(data)
+	if err != nil {
+		return response.UserResponse{}, nil
+	}
+
+	return response.UserResponse{
+		Id: data.Id,
+		Email: data.Email,
+		Nickname: data.Nickname,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
+	}, nil
 }
 
 func (uu *userUsecase) GetAllUser(order string, sort string, page int, limit int) ([]any, dto.Paging, error) {

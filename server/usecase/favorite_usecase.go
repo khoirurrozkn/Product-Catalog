@@ -6,6 +6,9 @@ import (
 	"server/model/dto"
 	"server/model/dto/request"
 	"server/repository"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type FavoriteUsecase interface {
@@ -19,7 +22,22 @@ type favoriteUsecase struct {
 }
 
 func (pu *favoriteUsecase) CreateFavorite(newFavorite request.Favorite) (model.Favorite, error) {
-	return pu.repo.CreateFavorite(newFavorite)
+	newFavorite.Id = uuid.NewString()
+	now := time.Now().UTC()
+
+	err := pu.repo.CreateFavorite(newFavorite.Id, newFavorite.UserId, newFavorite.ProductId, now)
+	if err != nil {
+		return model.Favorite{}, err
+	}
+
+	data := model.Favorite{
+		Id: newFavorite.Id,
+		UserId: newFavorite.UserId,
+		ProductId: newFavorite.ProductId,
+		CreatedAt: now,
+	}
+
+	return data, err
 }
 
 func (pu *favoriteUsecase) GetAllFavorite(order string, sort string, page int, limit int) ([]any, dto.Paging, error) {

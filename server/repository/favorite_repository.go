@@ -4,15 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 	"server/model"
-	"server/model/dto/request"
 	"server/utils"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type FavoriteRepository interface {
-	CreateFavorite(NewFavorite request.Favorite) (model.Favorite, error)
+	CreateFavorite(id string, userId string, productId string, now time.Time) error
 	GetAllFavorite(order string, sort string, limit int, offset int) ([]any, int, error)
 	DeleteFavoriteById(id string) (string, error)
 }
@@ -21,26 +18,18 @@ type favoriteRepository struct {
 	db *sql.DB
 }
 
-func (pr *favoriteRepository) CreateFavorite(NewFavorite request.Favorite) (model.Favorite, error) {
+func (pr *favoriteRepository) CreateFavorite(id string, userId string, productId string, now time.Time) error {
 
-	NewFavorite.Id = uuid.NewString()
-	now := time.Now().UTC()
 	_, err := pr.db.Exec(utils.INSERT_FAVORITE,
-		NewFavorite.Id,
-		NewFavorite.UserId,
-		NewFavorite.ProductId,
+		id,
+		userId,
+		productId,
 		now,
 	)
 	if err != nil {
-		return model.Favorite{}, err
+		return err
 	}
-	favorite := model.Favorite{
-		Id:        NewFavorite.Id,
-		UserId:    NewFavorite.UserId,
-		ProductId: NewFavorite.ProductId,
-		CreatedAt: now,
-	}
-	return favorite, err
+	return err
 }
 
 func (pr *favoriteRepository) GetAllFavorite(order string, sort string, limit int, offset int) ([]any, int, error) {

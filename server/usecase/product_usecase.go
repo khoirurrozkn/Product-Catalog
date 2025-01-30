@@ -6,6 +6,8 @@ import (
 	"server/model/dto"
 	"server/model/dto/response"
 	"server/repository"
+
+	"github.com/google/uuid"
 )
 
 type ProductUsecase interface {
@@ -20,6 +22,7 @@ type productUsecase struct {
 }
 
 func (pu *productUsecase) CreateProduct(newProduct model.Product) (model.Product, error) {
+	newProduct.Id = uuid.NewString()
 	return pu.repo.CreateProduct(newProduct)
 }
 

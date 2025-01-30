@@ -4,18 +4,14 @@ import (
 	"database/sql"
 	"fmt"
 	"server/model"
-	"server/model/dto/request"
 	"server/model/dto/response"
 	"server/utils"
-	"time"
-
-	"github.com/google/uuid"
 )
 
 type UserRepository interface {
 	GetUserByEmail(email string) (model.User, error)
 
-	CreateUser(NewUser request.UserRegister) (response.UserResponse, error)
+	CreateUser(newUser model.User) error
 	GetAllUser(order string, sort string, limit int, offset int) ([]any, int, error)
 	DeleteUserById(id string) (string, error)
 }
@@ -41,29 +37,21 @@ func (pr *userRepository) GetUserByEmail(email string) (model.User, error) {
 	return user, err
 }
 
-func (pr *userRepository) CreateUser(NewUser request.UserRegister) (response.UserResponse, error) {
+func (pr *userRepository) CreateUser(newUser model.User) error {
 
-	id := uuid.NewString()
-	now := time.Now().UTC()
 	_, err := pr.db.Exec(utils.INSERT_USER,
-		id,
-		NewUser.Email,
-		NewUser.Nickname,
-		NewUser.Password,
-		now,
-		now,
+		newUser.Id,
+		newUser.Email,
+		newUser.Nickname,
+		newUser.Password,
+		newUser.CreatedAt,
+		newUser.UpdatedAt,
 	)
 	if err != nil {
-		return response.UserResponse{}, err
+		return err
 	}
-	user := response.UserResponse{
-		Id:        id,
-		Email:     NewUser.Email,
-		Nickname:  NewUser.Nickname,
-		CreatedAt: now,
-		UpdatedAt: now,
-	}
-	return user, err
+
+	return nil
 }
 
 func (pr *userRepository) GetAllUser(order string, sort string, limit int, offset int) ([]any, int, error) {

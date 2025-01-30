@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"server/model"
 	"server/utils"
-
-	"github.com/google/uuid"
 )
 
 type ProductRepository interface{
@@ -21,8 +19,6 @@ type productRepository struct {
 }
 
 func (pr *productRepository) CreateProduct(NewProduct model.Product) (model.Product, error) {
-	NewProduct.Id = uuid.NewString()
-	
 	data := model.Product{}
 	err := pr.db.QueryRow(utils.INSERT_PRODUCT,
 		NewProduct.Id,

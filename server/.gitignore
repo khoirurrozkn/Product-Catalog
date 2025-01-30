@@ -1,4 +1,3 @@
 .env
-test.go
-test.txt
+info.txt
 ec-secp256k1-priv-key.pem
