@@ -16,8 +16,7 @@ const (
 	DELETE_PRODUCT_BY_ID       = "DELETE FROM product WHERE id = $1"
 
 	SELECT_USER_BY_EMAIL = "SELECT id, email, nickname, password, created_at, updated_at FROM users WHERE email = $1"
-	SELECT_USER_BY_NICKNAME = "SELECT id, email, nickname, password, created_at, updated_at FROM users WHERE nickname = $1"
-	INSERT_USER = `
+	INSERT_USER          = `
 		INSERT INTO users (
 			id, 
 			email,
@@ -41,10 +40,17 @@ const (
 			created_at
 		) VALUES ($1, $2, $3, $4)
 	`
-	SELECT_FAVORITE_WITH_PAGING = "SELECT id, user_id, product_id, created_at FROM favorite ORDER BY %s %s LIMIT $1 OFFSET $2"
+	SELECT_FAVORITE_BY_ID       = "SELECT id, user_id, product_id, created_at FROM favorite WHERE id = $1"
+	SELECT_FAVORITE_WITH_PAGING = "SELECT id, user_id, product_id, created_at FROM favorite WHERE user_id = $1 ORDER BY %s %s LIMIT $2 OFFSET $3"
 	SELECT_COUNT_FAVORITE       = "SELECT COUNT(id) FROM favorite"
-	SELECT_FAVORITE_BY_ID       = "SELECT id, user_id, product_id, created_at FROM favorite"
-	DELETE_FAVORITE_BY_ID       = "DELETE FROM favorite WHERE id = $1"
+	DELETE_FAVORITE_BY_ID       = "DELETE FROM favorite WHERE user_id = $1 AND product_id = $2"
 
+	INSERT_USER_REFRESH_TOKEN = `INSERT INTO refresh_token (
+		id, 
+		user_id, 
+		token, 
+		expires_at
+		) VALUES ($1, $2, $3, $4)
+	`
 	GET_USER_REFRESH_TOKEN_BY_TOKEN = "SELECT id, user_id, token, expires_at FROM refresh_token WHERE token"
 )

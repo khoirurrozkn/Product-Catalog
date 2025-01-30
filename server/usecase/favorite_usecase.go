@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"math"
 	"server/model"
 	"server/model/dto"
@@ -12,38 +13,36 @@ import (
 )
 
 type FavoriteUsecase interface {
-	CreateFavorite(newFavorite request.Favorite) (model.Favorite, error)
-	GetAllFavorite(order string, sort string, page int, limit int) ([]any, dto.Paging, error)
-	DeleteFavoriteById(id string) (string, error)
+	CreateFavorite(newFavorite request.Favorite, userId string) (model.Favorite, error)
+	GetAllFavorite(userId string, order string, sort string, page int, limit int) ([]any, dto.Paging, error)
+	DeleteFavoriteById(userId string, favoriteId string) (string, error)
 }
 
 type favoriteUsecase struct {
 	repo repository.FavoriteRepository
 }
 
-func (pu *favoriteUsecase) CreateFavorite(newFavorite request.Favorite) (model.Favorite, error) {
-	newFavorite.Id = uuid.NewString()
-	now := time.Now().UTC()
+func (pu *favoriteUsecase) CreateFavorite(newFavorite request.Favorite, UserId string) (model.Favorite, error) {
 
-	err := pu.repo.CreateFavorite(newFavorite.Id, newFavorite.UserId, newFavorite.ProductId, now)
+	data := model.Favorite{
+		Id: uuid.NewString(),
+		UserId: UserId,
+		ProductId: newFavorite.ProductId,
+		CreatedAt: time.Now().UTC(),
+	}
+
+	err := pu.repo.CreateFavorite(data)
 	if err != nil {
 		return model.Favorite{}, err
 	}
 
-	data := model.Favorite{
-		Id: newFavorite.Id,
-		UserId: newFavorite.UserId,
-		ProductId: newFavorite.ProductId,
-		CreatedAt: now,
-	}
-
-	return data, err
+	return data, nil
 }
 
-func (pu *favoriteUsecase) GetAllFavorite(order string, sort string, page int, limit int) ([]any, dto.Paging, error) {
+func (pu *favoriteUsecase) GetAllFavorite(userId string, order string, sort string, page int, limit int) ([]any, dto.Paging, error) {
 	offset := (page - 1) * limit
 
-	data, totalRows, err := pu.repo.GetAllFavorite(order, sort, limit, offset)
+	data, totalRows, err := pu.repo.GetAllFavorite(userId, order, sort, limit, offset)
 	if err != nil {
 		return nil, dto.Paging{}, err
 	}
@@ -58,8 +57,17 @@ func (pu *favoriteUsecase) GetAllFavorite(order string, sort string, page int, l
 	return data, paging, nil
 }
 
-func (pu *favoriteUsecase) DeleteFavoriteById(id string) (string, error) {
-	return pu.repo.DeleteFavoriteById(id)
+func (pu *favoriteUsecase) DeleteFavoriteById(userId string, favoriteId string) (string, error) {
+	findById, err := pu.repo.GetById(favoriteId)
+	if err != nil {
+		return "", err
+	}
+
+	if findById.UserId != userId {
+		return "", errors.New("hayooo mau ngapain")
+	}
+
+	return pu.repo.DeleteFavoriteById(favoriteId)
 }
 
 func NewFavoriteUsecase(repo repository.FavoriteRepository) FavoriteUsecase {

@@ -1,6 +1,6 @@
 package request
 
 type UserLogin struct {
-	EmailOrNickname string `json:"email_or_nickname"`
-	Password        string `json:"password"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }

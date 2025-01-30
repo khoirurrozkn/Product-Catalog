@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"server/model"
 	"server/utils"
-	"time"
 )
 
 type FavoriteRepository interface {
-	CreateFavorite(id string, userId string, productId string, now time.Time) error
-	GetAllFavorite(order string, sort string, limit int, offset int) ([]any, int, error)
+	GetById(favoriteId string) (model.Favorite, error)
+
+	CreateFavorite(newFavorite model.Favorite) error
+	GetAllFavorite(userId string, order string, sort string, limit int, offset int) ([]any, int, error)
 	DeleteFavoriteById(id string) (string, error)
 }
 
@@ -18,13 +19,28 @@ type favoriteRepository struct {
 	db *sql.DB
 }
 
-func (pr *favoriteRepository) CreateFavorite(id string, userId string, productId string, now time.Time) error {
+func (pr *favoriteRepository) GetById(favoriteId string) (model.Favorite, error) {
+
+	var data model.Favorite
+	err := pr.db.QueryRow(utils.SELECT_FAVORITE_BY_ID, favoriteId).Scan(
+		data.Id,
+		data.UserId,
+		data.ProductId,
+		data.CreatedAt,
+	)
+	if err != nil {
+		return model.Favorite{}, err
+	}
+	return data, nil
+}
+
+func (pr *favoriteRepository) CreateFavorite(newFavorite model.Favorite) error {
 
 	_, err := pr.db.Exec(utils.INSERT_FAVORITE,
-		id,
-		userId,
-		productId,
-		now,
+		newFavorite.Id,
+		newFavorite.UserId,
+		newFavorite.ProductId,
+		newFavorite.CreatedAt,
 	)
 	if err != nil {
 		return err
@@ -32,11 +48,11 @@ func (pr *favoriteRepository) CreateFavorite(id string, userId string, productId
 	return err
 }
 
-func (pr *favoriteRepository) GetAllFavorite(order string, sort string, limit int, offset int) ([]any, int, error) {
+func (pr *favoriteRepository) GetAllFavorite(userId string, order string, sort string, limit int, offset int) ([]any, int, error) {
 
 	query := fmt.Sprintf(utils.SELECT_FAVORITE_WITH_PAGING, order, sort)
 
-	rows, err := pr.db.Query(query, limit, offset)
+	rows, err := pr.db.Query(query, userId, limit, offset)
 	if err != nil {
 		return nil, -1, err
 	}

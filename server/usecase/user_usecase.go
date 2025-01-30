@@ -31,7 +31,7 @@ type userUsecase struct {
 
 func (uu *userUsecase) LoginUser(user request.UserLogin) (response.UserCredential, error){
 
-	findUser, err := uu.repo.GetUserByEmail(user.EmailOrNickname)
+	findUser, err := uu.repo.GetUserByEmail(user.Email)
 	if err != nil {
 		return response.UserCredential{}, err
 	}

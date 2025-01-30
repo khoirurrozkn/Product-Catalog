@@ -83,7 +83,7 @@ func (pc *UserController) CreateHandler(c *gin.Context) {
 func (pc *UserController) getAllHandler(c *gin.Context) {
 	order := c.DefaultQuery("order", "created_at")
 	sort := c.DefaultQuery("sort", "DESC")
-	limit := 1
+	limit := 10
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 
 	if err != nil {

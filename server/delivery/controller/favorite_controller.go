@@ -2,23 +2,28 @@ package controller
 
 import (
 	"net/http"
+	"server/middleware"
 	"server/model/dto/request"
 	"server/model/dto/response"
 	"server/usecase"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 )
 
 type FavoriteController struct {
 	pu usecase.FavoriteUsecase
 	rg *gin.RouterGroup
+	authMiddleware middleware.AuthMiddleware
 }
 
 func (pc *FavoriteController) CreateHandler(c *gin.Context) {
-	var newFavorite request.Favorite
+	var productId request.Favorite
+	claims := c.MustGet("claims").(jwt.MapClaims)
+    userId := claims["user_id"].(string)
 
-	if err := c.ShouldBindJSON(&newFavorite); err != nil {
+	if err := c.ShouldBindJSON(&productId); err != nil {
 		response.SendSingleResponseError(
 			c,
 			http.StatusBadRequest,
@@ -28,7 +33,7 @@ func (pc *FavoriteController) CreateHandler(c *gin.Context) {
 		return
 	}
 
-	data, err := pc.pu.CreateFavorite(newFavorite)
+	data, err := pc.pu.CreateFavorite(productId, userId)
 	if err != nil {
 		response.SendSingleResponseError(
 			c,
@@ -49,8 +54,10 @@ func (pc *FavoriteController) CreateHandler(c *gin.Context) {
 func (pc *FavoriteController) getAllByIdUserHandler(c *gin.Context) {
 	order := c.DefaultQuery("order", "created_at")
 	sort := c.DefaultQuery("sort", "DESC")
-	limit := 1
+	limit := 10
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	claims := c.MustGet("claims").(jwt.MapClaims)
+    userId := claims["user_id"].(string)
 
 	if err != nil {
 		response.SendSingleResponseError(
@@ -80,6 +87,7 @@ func (pc *FavoriteController) getAllByIdUserHandler(c *gin.Context) {
 	}
 
 	favorite, paging, err := pc.pu.GetAllFavorite(
+		userId,
 		order,
 		sort,
 		page,
@@ -106,8 +114,10 @@ func (pc *FavoriteController) getAllByIdUserHandler(c *gin.Context) {
 
 func (pc *FavoriteController) deleteByIdHandler(c *gin.Context) {
 	favoriteId := c.Param("id")
+	claims := c.MustGet("claims").(jwt.MapClaims)
+    userId := claims["user_id"].(string)
 
-	data, err := pc.pu.DeleteFavoriteById(favoriteId)
+	data, err := pc.pu.DeleteFavoriteById(userId, favoriteId)
 	if err != nil {
 		response.SendSingleResponseError(
 			c,
@@ -127,14 +137,15 @@ func (pc *FavoriteController) deleteByIdHandler(c *gin.Context) {
 
 func (pc *FavoriteController) Route() {
 	router := pc.rg.Group("/favorite")
-	router.POST("/", pc.CreateHandler)
-	router.GET("/", pc.getAllByIdUserHandler)
-	router.DELETE("/:id", pc.deleteByIdHandler)
+	router.POST("/", pc.authMiddleware.RequireToken("User"), pc.CreateHandler)
+	router.GET("/", pc.authMiddleware.RequireToken("User"), pc.getAllByIdUserHandler)
+	router.DELETE("/:id", pc.authMiddleware.RequireToken("User"), pc.deleteByIdHandler)
 }
 
-func NewFavoriteController(pu usecase.FavoriteUsecase, routerGroup *gin.RouterGroup) *FavoriteController {
+func NewFavoriteController(pu usecase.FavoriteUsecase, routerGroup *gin.RouterGroup, authMiddleware middleware.AuthMiddleware) *FavoriteController {
 	return &FavoriteController{
 		pu: pu,
 		rg: routerGroup,
+		authMiddleware: authMiddleware,
 	}
 }

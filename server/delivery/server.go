@@ -25,8 +25,8 @@ type Server struct {
 
 func (s *Server) setupController(){
 	controller.NewUserController(s.userUc, s.routerGroup, s.authMiddlware).Route()
-	controller.NewProductController(s.productUc, s.routerGroup).Route()
-	controller.NewFavoriteController(s.favoriteUc, s.routerGroup).Route()
+	controller.NewProductController(s.productUc, s.routerGroup, s.authMiddlware).Route()
+	controller.NewFavoriteController(s.favoriteUc, s.routerGroup, s.authMiddlware).Route()
 
 }
 

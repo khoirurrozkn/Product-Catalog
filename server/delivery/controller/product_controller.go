@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"server/middleware"
 	"server/model"
 	"server/model/dto/response"
 	"server/usecase"
@@ -13,6 +14,7 @@ import (
 type ProductController struct {
 	pu usecase.ProductUsecase
 	rg *gin.RouterGroup
+	authMiddleware middleware.AuthMiddleware
 }
 
 func (pc *ProductController) CreateHandler(c *gin.Context) {
@@ -158,13 +160,13 @@ func (pc *ProductController) deleteByIdHandler(c *gin.Context){
 
 func (pc *ProductController) Route(){
 	router := pc.rg.Group("/product")
-	router.POST("", pc.CreateHandler)
-	router.GET("", pc.getAllHandler)
-	router.PUT("", pc.updateHandler)
-	router.DELETE("/:id", pc.deleteByIdHandler)
+	router.POST("", pc.authMiddleware.RequireToken("Admin"), pc.CreateHandler)
+	router.GET("", pc.authMiddleware.RequireToken("User", "Admin"), pc.getAllHandler)
+	router.PUT("", pc.authMiddleware.RequireToken("Admin"), pc.updateHandler)
+	router.DELETE("/:id", pc.authMiddleware.RequireToken("Admin"), pc.deleteByIdHandler)
 }
 
-func NewProductController(pu usecase.ProductUsecase, routerGroup *gin.RouterGroup) *ProductController {
+func NewProductController(pu usecase.ProductUsecase, routerGroup *gin.RouterGroup, authMiddleware middleware.AuthMiddleware) *ProductController {
 	return &ProductController{
 		pu: pu,
 		rg: routerGroup,

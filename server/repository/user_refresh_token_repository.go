@@ -17,7 +17,7 @@ type userRefreshTokenRepository struct {
 
 func (pr *userRefreshTokenRepository) CreateUserRefreshToken(id string, userId string, token string, future time.Time) error {
 
-	_, err := pr.db.Exec(utils.INSERT_USER,
+	_, err := pr.db.Exec(utils.INSERT_USER_REFRESH_TOKEN,
 		id,
 		userId,
 		token,
